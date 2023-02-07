@@ -1,7 +1,7 @@
 {
-  "name": "common-package",
-  "version": "0.0.1",
-  "description": "common package",
+  "name": "backend-common-package",
+  "version": "0.0.3",
+  "description": "backend common package",
   "author": "",
   "private": false,
   "license": "ISC",
