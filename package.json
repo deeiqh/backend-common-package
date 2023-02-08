@@ -1,6 +1,6 @@
 {
   "name": "backend-common-package",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "backend common package",
   "author": "",
   "private": false,
@@ -81,13 +81,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/deeiqh/common-package.git"
+    "url": "git+ssh://git@github.com/deeiqh/backend-common-package.git"
   },
   "keywords": [
     "common"
   ],
   "bugs": {
-    "url": "https://github.com/deeiqh/common-package/issues"
+    "url": "https://github.com/deeiqh/backend-common-package/issues"
   },
-  "homepage": "https://github.com/deeiqh/common-package#readme"
+  "homepage": "https://github.com/deeiqh/backend-common-package#readme"
 }
