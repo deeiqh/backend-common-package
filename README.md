@@ -10,16 +10,16 @@ import { CommonModule } from 'backend-common-package';
 
 ```js
 CommonModule.forRoot({
-  cacheConfig: { store: redisStore },
+  cacheConfig: { store: example_redisStore },
   kafkaConfig:  {
     transport: Transport.KAFKA,
     options: {
       client: {
-          clientId: 'client',
-            brokers: ['localhost:9092')],
+          clientId: process.env.CLIENT_ID,
+            brokers: [process.env.BROKERS],
       },
       consumer: {
-          groupId: 'service-consumer-group',
+          groupId: process.env.GROUP_ID,
       },
     },,
 }),
