@@ -9,7 +9,7 @@ export interface ResultMessage {
 @Injectable()
 export class ValidateOperationOtpService {
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka,
   ) {}
 
