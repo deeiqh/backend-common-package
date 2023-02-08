@@ -1,5 +1,6 @@
-import { CacheManagerOptions } from '@nestjs/common';
-import { KafkaOptions } from '@nestjs/microservices';
+import { DynamicModule } from 'node_modules/@nestjs/common/interfaces/modules/dynamic-module.interface';
+import { CacheManagerOptions } from 'node_modules/@nestjs/common/cache/interfaces/cache-manager.interface';
+import { KafkaOptions } from 'node_modules/@nestjs/microservices/interfaces/microservice-configuration.interface';
 
 export interface IProvidersConfig {
   cacheConfig: CacheManagerOptions;
