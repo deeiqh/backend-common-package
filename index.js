@@ -1,4 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+/* eslint-disable @typescript-eslint/no-var-requires */
 const { CommonModule } = require('./dist/common.module');
+const { SendOtpGuard } = require('./dist/guards/send-otp.guard');
+const { OtpValidatedGuard } = require('./dist/guards/otp-validated.guard');
 
-module.exports = { CommonModule };
+module.exports = { CommonModule, SendOtpGuard, OtpValidatedGuard };

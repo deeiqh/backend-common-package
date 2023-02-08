@@ -10,3 +10,7 @@ export interface IProvidersConfig {
 export class CommonModule {
   static forRoot(configs: IProvidersConfig): DynamicModule;
 }
+
+export class SendOtpGuard {}
+
+export class OtpValidatedGuard {}
