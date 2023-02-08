@@ -51,7 +51,7 @@ export class SendOtpGuard implements CanActivate {
       {
         code,
       },
-      OTP_OPERATION_MAX_MINUTES * 60,
+      OTP_OPERATION_MAX_MINUTES * 60 * 1000,
     );
 
     return true;
