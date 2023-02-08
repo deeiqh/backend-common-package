@@ -1,8 +1,8 @@
-## Backend common package
+# Backend common package
 
-### Snippets
+## Snippets
 
-##### CommonModule
+#### CommonModule
 
 ```js
 import { CommonModule } from 'backend-common-package';
@@ -35,13 +35,17 @@ import { SendOtpGuard, OtpValidatedGuard } from 'backend-common-package';
 @UseGuards(SendOtpGuard, OtpValidatedGuard)
 ```
 
-##### Service
+##### Controllers
+
+whose constructor injects the following:
 
 ```js
-import { ValidateOperationOtpService } from 'backend-common-package';
+  @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  @Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka
+```
 
-new ValidateOperationOtpService(
-  this.cacheManager,
-  this.clientKafka,
-).validateOperationOtp(input),
+```js
+import { validateOperationOtp } from 'backend-common-package';
+
+await validateOperationOtp(this.cacheManager, this.clientKafka, input);
 ```
