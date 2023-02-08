@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Cache } from 'cache-manager';
@@ -17,8 +18,17 @@ export class SendOtpGuard implements CanActivate {
     @Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka,
   ) {}
 
+  logger = new Logger(SendOtpGuard.name);
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const data = context.switchToRpc().getData(); //add cases, rpc, http, graphql
+    const data =
+      context.switchToRpc().getData() || context.switchToHttp().getRequest();
+
+    if (!data?.otpHeaders) {
+      this.logger.error('[Error] SendOtpGuard: Empty context data');
+      return false;
+    }
+
     const { targetType, target, operationUUID } = data.otpHeaders;
 
     //consider
