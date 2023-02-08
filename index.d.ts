@@ -1,6 +1,6 @@
 import { DynamicModule } from 'node_modules/@nestjs/common/interfaces/modules/dynamic-module.interface';
 import { IProvidersConfig } from 'src/guards/guards.module';
-import { ResultMessage } from 'src/guards/validate-operation-otp.service';
+import { ResultMessage } from 'src/guards/validate-operation-otp';
 import { Cache } from 'node_modules/cache-manager';
 import { ClientKafka } from 'node_modules/@nestjs/microservices';
 
@@ -12,14 +12,11 @@ export class SendOtpGuard {}
 
 export class OtpValidatedGuard {}
 
-export class ValidateOperationOtpService {
-  private readonly cacheManager;
-  private readonly clientKafka;
-
-  constructor(cacheManager: Cache, clientKafka: ClientKafka);
-
-  validateOperationOtp(input: {
+export async function validateOperationOtp(
+  cacheManager: Cache,
+  clientKafka: ClientKafka,
+  input: {
     operationUUID: string;
     code: string;
-  }): Promise<ResultMessage>;
-}
+  },
+): Promise<ResultMessage>;

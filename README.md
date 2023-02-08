@@ -34,3 +34,14 @@ import { SendOtpGuard, OtpValidatedGuard } from 'backend-common-package';
 ```js
 @UseGuards(SendOtpGuard, OtpValidatedGuard)
 ```
+
+##### Service
+
+```js
+import { ValidateOperationOtpService } from 'backend-common-package';
+
+new ValidateOperationOtpService(
+  this.cacheManager,
+  this.clientKafka,
+).validateOperationOtp(input),
+```
