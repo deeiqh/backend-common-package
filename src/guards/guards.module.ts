@@ -29,7 +29,6 @@ export class GuardsModule {
       providers: [
         EventEmitter,
         {
-          //Consider
           provide: 'OTP_KAFKA_CONSUMER',
           useFactory: async (eventEmitter: EventEmitter) => {
             const kafka = new Kafka(

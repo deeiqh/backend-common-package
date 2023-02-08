@@ -31,7 +31,6 @@ export class SendOtpGuard implements CanActivate {
 
     const { targetType, target, operationUUID } = data.otpHeaders;
 
-    //consider
     const numberDigits = 6;
     const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
     let code = '';
