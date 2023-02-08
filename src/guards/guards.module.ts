@@ -9,6 +9,7 @@ import { EventEmitter } from 'events';
 import { ConsumerConfig, Kafka, KafkaConfig } from 'kafkajs';
 import { OtpValidatedGuard } from './otp-validated.guard';
 import { SendOtpGuard } from './send-otp.guard';
+import { ValidateOperationOtpService } from './validate-operation-otp.service';
 
 export interface IProvidersConfig {
   cacheConfig: CacheManagerOptions;
@@ -63,6 +64,7 @@ export class GuardsModule {
         },
         SendOtpGuard,
         OtpValidatedGuard,
+        ValidateOperationOtpService,
       ],
       exports: [
         CacheModule,
@@ -70,6 +72,7 @@ export class GuardsModule {
         EventEmitter,
         SendOtpGuard,
         OtpValidatedGuard,
+        ValidateOperationOtpService,
       ],
     };
   }
