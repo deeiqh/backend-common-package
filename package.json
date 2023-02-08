@@ -1,6 +1,6 @@
 {
   "name": "backend-common-package",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "description": "backend common package",
   "author": "",
   "private": false,
@@ -9,6 +9,7 @@
   "types": "index.d.ts",
   "files": [
     "dist",
+    "node_modules",
     "index.js",
     "index.d.ts"
   ],
