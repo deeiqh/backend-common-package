@@ -1,12 +1,17 @@
 {
   "name": "backend-common-package",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "backend common package",
   "author": "",
   "private": false,
   "license": "ISC",
   "main": "index.js",
   "types": "index.d.ts",
+  "files": [
+    "dist",
+    "index.js",
+    "index.d.ts"
+  ],
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
