@@ -14,7 +14,7 @@ export const OTP_OPERATION_MAX_MINUTES = 1;
 @Injectable()
 export class SendOtpGuard implements CanActivate {
   constructor(
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka,
   ) {}
 
