@@ -1,5 +1,7 @@
 ## Backend common package
 
+## Moved to @hapi-corp/backend-common-package
+
 ### CommonModule
 
 > You should append the `CommonModule.forRoot()` into your current module import array.
