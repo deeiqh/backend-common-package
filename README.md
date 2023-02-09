@@ -2,6 +2,8 @@
 
 ### CommonModule
 
+> You should append the `CommonModule.forRoot()` into your current module import array.
+
 ```js
 import { CommonModule } from 'backend-common-package';
 ```
@@ -33,11 +35,14 @@ import { SendOtpGuard, OtpValidatedGuard } from 'backend-common-package';
 @UseGuards(SendOtpGuard, OtpValidatedGuard)
 ```
 
+> Both, `SendOtpGuard`and `OtpValidatedGuard` need `CommonModule` to be already imported by current module.
+
 #### Controllers
 
 > whose constructor injects the following:\
 > `@Inject(CACHE_MANAGER) private readonly cacheManager: Cache,`\
-> `@Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka`
+> `@Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka`\
+> both, `CACHE_MANAGER` and `'CLIENT_KAFKA'` come from `CommonModule`
 
 ```js
 import { validateOperationOtp } from 'backend-common-package';
