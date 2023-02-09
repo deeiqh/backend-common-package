@@ -37,11 +37,11 @@ import { SendOtpGuard, OtpValidatedGuard } from 'backend-common-package';
 
 ##### Controllers
 
+```js
 whose constructor injects the following:
 
-```js
-  @Inject(CACHE_MANAGER) private cacheManager: Cache,
-  @Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka
+@Inject(CACHE_MANAGER) private cacheManager: Cache,
+@Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka
 ```
 
 ```js
