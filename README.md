@@ -38,7 +38,7 @@ import {
 @UseGuards(SendOperationOtpGuard, ValidatedOperationOtpGuard)
 ```
 
-#### Controllers
+#### Service
 
 ```js
 import { GuardsService } from 'backend-common-package';
