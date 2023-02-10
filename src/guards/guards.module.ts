@@ -11,8 +11,8 @@ import {
   EVALUATED_OPERATION_OTP,
   EVALUATED_OPERATION_OTP_RESULT,
 } from './events/topics';
+import { GuardsService } from './guards.service';
 import { SendOperationOtpGuard } from './send-operation-otp.guard';
-import { ValidateOperationOtpService } from './validate-operation-otp.service';
 import { ValidatedOperationOtpGuard } from './validated-operation-otp.guard';
 
 export interface IProvidersConfig {
@@ -68,7 +68,7 @@ export class GuardsModule {
         },
         SendOperationOtpGuard,
         ValidatedOperationOtpGuard,
-        ValidateOperationOtpService,
+        GuardsService,
       ],
       exports: [
         CacheModule,
@@ -76,7 +76,7 @@ export class GuardsModule {
         EventEmitter,
         SendOperationOtpGuard,
         ValidatedOperationOtpGuard,
-        ValidateOperationOtpService,
+        GuardsService,
       ],
     };
   }

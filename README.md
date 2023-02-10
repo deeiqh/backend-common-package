@@ -38,10 +38,18 @@ import {
 @UseGuards(SendOperationOtpGuard, ValidatedOperationOtpGuard)
 ```
 
-#### Service
+#### Controllers
 
 ```js
-import { ValidateOperationOtpService } from 'backend-common-package';
+import { GuardsService } from 'backend-common-package';
+```
 
-await new ValidateOperationOtpService().validateOperationOtp(input),
+```js
+constructor(
+  private readonly guardsService: GuardsService,
+) {}
+```
+
+```js
+await this.guardsService.validateOperationOtp(input),
 ```

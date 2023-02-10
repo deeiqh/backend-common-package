@@ -10,7 +10,7 @@ export class SendOperationOtpGuard {}
 
 export class ValidatedOperationOtpGuard {}
 
-export class ValidateOperationOtpService {
+export class GuardsService {
   async validateOperationOtp(input: {
     operationUUID: string;
     code: string;

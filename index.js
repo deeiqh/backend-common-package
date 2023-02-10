@@ -6,13 +6,11 @@ const {
 const {
   ValidatedOperationOtpGuard,
 } = require('./dist/guards/validated-operation-otp.guard');
-const {
-  ValidateOperationOtpService,
-} = require('./dist/guards/validate-operation-otp.service');
+const { GuardsService } = require('./dist/guards/guards.service');
 
 module.exports = {
   CommonModule,
   SendOperationOtpGuard,
   ValidatedOperationOtpGuard,
-  ValidateOperationOtpService,
+  GuardsService,
 };

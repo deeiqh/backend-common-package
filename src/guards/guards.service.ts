@@ -8,7 +8,7 @@ export interface ResultMessage {
 }
 
 @Injectable()
-export class ValidateOperationOtpService {
+export class GuardsService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka,
