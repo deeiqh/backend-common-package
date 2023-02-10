@@ -36,22 +36,22 @@ export class SendOperationOtpGuard implements CanActivate {
 
     const numberDigits = 6;
     const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-    let code = '';
+    let otp = '';
     for (let i = numberDigits; i > 0; --i) {
-      code += chars[Math.round(Math.random() * (chars.length - 1))];
+      otp += chars[Math.round(Math.random() * (chars.length - 1))];
     }
-    code = code.toUpperCase();
+    otp = otp.toUpperCase();
 
     this.clientKafka.emit(SEND_OPERATION_OTP, {
       targetType,
       target,
-      code,
+      otp,
     });
 
     await this.cacheManager.set(
       operationUUID,
       {
-        code,
+        otp,
       },
       OTP_OPERATION_MAX_MINUTES * 60 * 1000,
     );
