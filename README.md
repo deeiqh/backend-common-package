@@ -2,7 +2,7 @@
 
 ### CommonModule
 
-> You should append the `CommonModule.forRoot()` into your current module import array.
+> You should append the `CommonModule.forRoot()` into your current module import array. This will allow you to use Guards, Services, etc.
 
 ```js
 import { CommonModule } from 'backend-common-package';
@@ -28,24 +28,20 @@ CommonModule.forRoot({
 #### Guards
 
 ```js
-import { SendOtpGuard, OtpValidatedGuard } from 'backend-common-package';
+import {
+  SendOperationOtpGuard,
+  ValidatedOperationOtpGuard,
+} from 'backend-common-package';
 ```
 
 ```js
-@UseGuards(SendOtpGuard, OtpValidatedGuard)
+@UseGuards(SendOperationOtpGuard, ValidatedOperationOtpGuard)
 ```
 
-> Both, `SendOtpGuard`and `OtpValidatedGuard` need `CommonModule` to be already imported by current module.
-
-#### Controllers
-
-> whose constructor injects the following:\
-> `@Inject(CACHE_MANAGER) private readonly cacheManager: Cache,`\
-> `@Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka`\
-> both, `CACHE_MANAGER` and `'CLIENT_KAFKA'` come from `CommonModule`
+#### Service
 
 ```js
-import { validateOperationOtp } from 'backend-common-package';
+import { ValidateOperationOtpService } from 'backend-common-package';
 
-await validateOperationOtp(this.cacheManager, this.clientKafka, input);
+await new ValidateOperationOtpService().validateOperationOtp(input),
 ```
