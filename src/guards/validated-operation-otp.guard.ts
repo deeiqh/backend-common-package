@@ -5,19 +5,22 @@ import {
   Logger,
 } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { OTP_OPERATION_MAX_MINUTES } from './send-otp.guard';
+import { EVALUATED_OPERATION_OTP_RESULT } from './events/topics';
+import { OTP_OPERATION_MAX_MINUTES } from './send-operation-otp.guard';
 
 @Injectable()
-export class OtpValidatedGuard implements CanActivate {
+export class ValidatedOperationOtpGuard implements CanActivate {
   constructor(private readonly eventEmitter: EventEmitter) {}
-  logger = new Logger(OtpValidatedGuard.name);
+  logger = new Logger(ValidatedOperationOtpGuard.name);
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const data =
       context.switchToRpc().getData() || context.switchToHttp().getRequest();
 
     if (!data?.otpHeaders) {
-      this.logger.error('[Error] OtpValidatedGuard: Empty context data');
+      this.logger.error(
+        `[Error] ${ValidatedOperationOtpGuard.name}: Empty context data`,
+      );
       return false;
     }
 
@@ -26,7 +29,7 @@ export class OtpValidatedGuard implements CanActivate {
     let wasProcessed = false;
     let isValid = false;
 
-    this.eventEmitter.on('otp-validated-result', (payload) => {
+    this.eventEmitter.on(EVALUATED_OPERATION_OTP_RESULT, (payload) => {
       if (operationUUID === payload.operationUUID) {
         wasProcessed = true;
         isValid = payload.isValid;

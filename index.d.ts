@@ -8,15 +8,13 @@ export class CommonModule {
   static forRoot(configs: IProvidersConfig): DynamicModule;
 }
 
-export class SendOtpGuard {}
+export class SendOperationOtpGuard {}
 
-export class OtpValidatedGuard {}
+export class ValidatedOperationOtpGuard {}
 
-export async function validateOperationOtp(
-  cacheManager: Cache,
-  clientKafka: ClientKafka,
-  input: {
+export class ValidateOperationOtpService {
+  async validateOperationOtp(input: {
     operationUUID: string;
     code: string;
-  },
-): Promise<ResultMessage>;
+  }): Promise<ResultMessage>;
+}

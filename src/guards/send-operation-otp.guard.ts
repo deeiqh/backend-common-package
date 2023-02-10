@@ -8,24 +8,27 @@ import {
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Cache } from 'cache-manager';
+import { SEND_OPERATION_OTP } from './events/topics';
 
 export const OTP_OPERATION_MAX_MINUTES = 1;
 
 @Injectable()
-export class SendOtpGuard implements CanActivate {
+export class SendOperationOtpGuard implements CanActivate {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka,
   ) {}
 
-  logger = new Logger(SendOtpGuard.name);
+  logger = new Logger(SendOperationOtpGuard.name);
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const data =
       context.switchToRpc().getData() || context.switchToHttp().getRequest();
 
     if (!data?.otpHeaders) {
-      this.logger.error('[Error] SendOtpGuard: Empty context data');
+      this.logger.error(
+        `[Error] ${SendOperationOtpGuard.name}: Empty context data`,
+      );
       return false;
     }
 
@@ -39,7 +42,7 @@ export class SendOtpGuard implements CanActivate {
     }
     code = code.toUpperCase();
 
-    this.clientKafka.emit('send-otp-operation', {
+    this.clientKafka.emit(SEND_OPERATION_OTP, {
       targetType,
       target,
       code,

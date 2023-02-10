@@ -7,8 +7,13 @@ import {
 import { ClientsModule, KafkaOptions } from '@nestjs/microservices';
 import { EventEmitter } from 'events';
 import { ConsumerConfig, Kafka, KafkaConfig } from 'kafkajs';
-import { OtpValidatedGuard } from './otp-validated.guard';
-import { SendOtpGuard } from './send-otp.guard';
+import {
+  EVALUATED_OPERATION_OTP,
+  EVALUATED_OPERATION_OTP_RESULT,
+} from './events/topics';
+import { SendOperationOtpGuard } from './send-operation-otp.guard';
+import { ValidateOperationOtpService } from './validate-operation-otp.service';
+import { ValidatedOperationOtpGuard } from './validated-operation-otp.guard';
 
 export interface IProvidersConfig {
   cacheConfig: CacheManagerOptions;
@@ -40,7 +45,7 @@ export class GuardsModule {
             );
             await consumer.connect();
             await consumer.subscribe({
-              topic: 'otp-validated',
+              topic: EVALUATED_OPERATION_OTP,
               fromBeginning: true,
             });
 
@@ -50,7 +55,7 @@ export class GuardsModule {
                   message.value?.toString() as string,
                 );
 
-                eventEmitter.emit('otp-validated-result', {
+                eventEmitter.emit(EVALUATED_OPERATION_OTP_RESULT, {
                   operationUUID: messageJson.operationUUID,
                   isValid: messageJson.isValid,
                 });
@@ -61,15 +66,17 @@ export class GuardsModule {
           },
           inject: [EventEmitter],
         },
-        SendOtpGuard,
-        OtpValidatedGuard,
+        SendOperationOtpGuard,
+        ValidatedOperationOtpGuard,
+        ValidateOperationOtpService,
       ],
       exports: [
         CacheModule,
         ClientsModule,
         EventEmitter,
-        SendOtpGuard,
-        OtpValidatedGuard,
+        SendOperationOtpGuard,
+        ValidatedOperationOtpGuard,
+        ValidateOperationOtpService,
       ],
     };
   }
