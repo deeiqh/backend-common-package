@@ -2,7 +2,7 @@
 
 ### CommonModule
 
-> You should append the `CommonModule.forRoot()` into your current module import array. This will allow you to use Guards, Services, etc.
+> Append the `CommonModule.forRoot()` into your current module import array. This will allow you to use Guards, Services, etc.
 
 ```js
 import { CommonModule } from 'backend-common-package';
@@ -27,6 +27,11 @@ CommonModule.forRoot({
 
 #### Guards
 
+> Request headers:\
+> ` key: otp-target-type, value: 'email' or 'phone'`\
+> ` key: otp-target, value: 'a@a.com' or '+51987654321' for example`\
+> ` key: otp-new-uuid-for-this-operation, value: 'some random uuid'`
+
 ```js
 import {
   SendOperationOtpGuard,
@@ -38,6 +43,25 @@ import {
 @UseGuards(SendOperationOtpGuard, ValidatedOperationOtpGuard)
 ```
 
+<<<<<<< HEAD
+=======
+#### Event
+
+`SendOperationOtpGuard` emits a kafka event that should be listened by your email or sms sender:
+
+```js
+Topic:
+  'SEND_OPERATION_OTP'
+
+Payload:
+  {
+    targetType: 'email' | 'phone',
+    target: string,
+    otp: string,
+  }
+```
+
+>>>>>>> main
 #### Service
 
 ```js
@@ -51,5 +75,8 @@ constructor(
 ```
 
 ```js
-await this.guardsService.validateOperationOtp(input),
+await this.guardsService.validateOperationOtp(input: {
+  operationUUID: string;
+  otp: string;
+}),
 ```

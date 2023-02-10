@@ -13,6 +13,6 @@ export class ValidatedOperationOtpGuard {}
 export class GuardsService {
   async validateOperationOtp(input: {
     operationUUID: string;
-    code: string;
+    otp: string;
   }): Promise<ResultMessage>;
 }

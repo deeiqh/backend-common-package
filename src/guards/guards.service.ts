@@ -16,22 +16,22 @@ export class GuardsService {
 
   async validateOperationOtp(input: {
     operationUUID: string;
-    code: string;
+    otp: string;
   }): Promise<ResultMessage> {
-    const { operationUUID, code } = input;
+    const { operationUUID, otp } = input;
 
-    const { code: codeCached } =
+    const { otp: otpCached } =
       ((await this.cacheManager.get(operationUUID)) as any) || {};
 
-    const isValid = codeCached === code;
+    const isValid = otpCached === otp;
 
-    if (!codeCached || isValid) {
+    if (!otpCached || isValid) {
       this.clientKafka.emit(EVALUATED_OPERATION_OTP, {
         operationUUID,
         isValid,
       });
 
-      if (!codeCached) {
+      if (!otpCached) {
         return {
           resultMessage: {
             message: 'Operation timed out',
@@ -43,12 +43,12 @@ export class GuardsService {
       await this.cacheManager.del(operationUUID);
 
       return {
-        resultMessage: { message: 'Validated code', statusCode: '200' },
+        resultMessage: { message: 'Validated otp', statusCode: '200' },
       };
     }
 
     return {
-      resultMessage: { message: 'Wrong code', statusCode: '200' },
+      resultMessage: { message: 'Wrong otp', statusCode: '200' },
     };
   }
 }
