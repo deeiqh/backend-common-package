@@ -43,25 +43,6 @@ import {
 @UseGuards(SendOperationOtpGuard, ValidatedOperationOtpGuard)
 ```
 
-<<<<<<< HEAD
-=======
-#### Event
-
-`SendOperationOtpGuard` emits a kafka event that should be listened by your email or sms sender:
-
-```js
-Topic:
-  'SEND_OPERATION_OTP'
-
-Payload:
-  {
-    targetType: 'email' | 'phone',
-    target: string,
-    otp: string,
-  }
-```
-
->>>>>>> main
 #### Service
 
 ```js
