@@ -24,23 +24,25 @@ export class CommonService {
 
   reduceModel(
     model: Record<string, any>,
-    fromProperty?: Record<string, any>,
+    modelObject?: Record<string, any>,
   ): void {
-    if (!fromProperty) {
-      fromProperty = model;
+    if (!modelObject) {
+      modelObject = model;
     }
 
-    for (const [property] of Object.keys(fromProperty)) {
-      if (fromProperty[property].value) {
-        model[property] = fromProperty[property].value;
-      } else if (fromProperty[property].props) {
-        this.reduceModel(model[property], fromProperty[property].props);
-      } else if (typeof fromProperty[property] === 'object') {
-        for (const [key, value] of Object.keys(fromProperty[property])) {
-          model[property][key] = value;
+    for (const [property] of Object.keys(modelObject)) {
+      if (modelObject[property].value) {
+        model[property] = modelObject[property].value;
+      } else if (modelObject[property].props) {
+        model[property] = {};
+        this.reduceModel(model[property], modelObject[property].props);
+      } else if (typeof modelObject[property] === 'object') {
+        for (const [key] of modelObject[property]) {
+          model[property][key] = {};
+          this.reduceModel(model[property][key], modelObject[property][key]);
         }
       } else {
-        model[property] = fromProperty[property];
+        model[property] = modelObject[property];
       }
     }
   }
