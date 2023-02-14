@@ -10,8 +10,8 @@ import { CommonModule } from 'backend-common-package';
 
 ```js
 CommonModule.forRoot({
-  cacheConfig: { store: example_redisStore },
-  kafkaConfig:  {
+  cacheConfig?: { store: example_redisStore },
+  kafkaConfig?:  {
     transport: Transport.KAFKA,
     options: {
       client: {
