@@ -30,16 +30,16 @@ export class CommonService {
       modelObject = model;
     }
 
-    for (const [property] of Object.keys(modelObject)) {
+    for (const [property] of Object.entries(modelObject)) {
       if (modelObject[property].value) {
         model[property] = modelObject[property].value;
       } else if (modelObject[property].props) {
         model[property] = {};
         this.reduceModel(model[property], modelObject[property].props);
       } else if (typeof modelObject[property] === 'object') {
-        for (const [key] of modelObject[property]) {
-          model[property][key] = {};
-          this.reduceModel(model[property][key], modelObject[property][key]);
+        model[property] = modelObject[property];
+        for (const [key] of Object.entries(modelObject[property])) {
+          this.reduceModel(model[property], modelObject[property][key]);
         }
       } else {
         model[property] = modelObject[property];
