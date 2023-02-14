@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CommonService {
-  reducePayload(payload: Record<string, any>): Record<string, any> {
+  reducePayload(payload: Record<string, any>): void {
     //examples:
-    //  payload?.value?.payload?.userId?.value
-    //    => payload?.useId
-    //  payload?.value?.payload?.customerUserEmail?.props?.email
-    //    => payload?.customerUserEmail.email
-
-    if (!payload) return {};
+    //  payload.value?.payload?.userId?.value
+    //    => payload.userId
+    //  payload.value?.payload?.customerUserEmail?.props?.email
+    //    => payload.customerUserEmail.email
+    //  payload.value?.payload?.customerUserEmail?.props?.email.value
+    //    => payload.customerUserEmail.email
 
     if (payload.value) {
       if (payload.value.payload) {
@@ -18,18 +18,14 @@ export class CommonService {
         } else {
           this.reduceModel(payload, payload.value.payload);
         }
-      } else {
-        return payload.value;
       }
     }
-
-    return payload;
   }
 
   reduceModel(
     model: Record<string, any>,
     fromProperty?: Record<string, any>,
-  ): Record<string, any> {
+  ): void {
     if (!fromProperty) {
       fromProperty = model;
     }
@@ -38,9 +34,7 @@ export class CommonService {
       if (fromProperty[property].value) {
         model[property] = fromProperty[property].value;
       } else if (fromProperty[property].props) {
-        for (const [prop, value] of Object.keys(fromProperty.props)) {
-          model[property][prop] = value;
-        }
+        this.reduceModel(model[property], fromProperty[property].props);
       } else if (typeof fromProperty[property] === 'object') {
         for (const [key, value] of Object.keys(fromProperty[property])) {
           model[property][key] = value;
@@ -49,7 +43,5 @@ export class CommonService {
         model[property] = fromProperty[property];
       }
     }
-
-    return model;
   }
 }
