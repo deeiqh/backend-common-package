@@ -16,3 +16,18 @@ export class GuardsService {
     otp: string;
   }): Promise<ResultMessage>;
 }
+
+export class CommonService {
+  reducePayload(payload: Record<string, any>): Record<string, any> | void;
+
+  reduceModel(
+    model: Record<string, any>,
+    modelObject?: Record<string, any>,
+  ): Record<string, any>;
+
+  private reduceModelOperation(
+    schema: Record<string, any>,
+    model: Record<string, any>,
+    modelObject?: Record<string, any>,
+  ): void;
+}
