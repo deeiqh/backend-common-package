@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class CommonService {
-  reducePayload(payload: Record<string, any>): Record<string, any> | undefined {
+  reducePayload(payload: Record<string, any>): Record<string, any> | void {
     //examples:
     //  payload.value?.payload?.userId?.value
     //    => payload.userId
@@ -27,8 +27,6 @@ export class CommonService {
         }
       }
     }
-
-    return;
   }
 
   reduceModel(
@@ -45,7 +43,7 @@ export class CommonService {
     return schema;
   }
 
-  reduceModelOperation(
+  private reduceModelOperation(
     schema: Record<string, any>,
     model: Record<string, any>,
     modelObject?: Record<string, any>,
@@ -54,51 +52,38 @@ export class CommonService {
       modelObject = model;
     }
 
-    //examples:
-    //  payload.value?.payload?.userId?.value
-    //    => payload.userId
-    //  payload.value?.payload?.customerUserEmail?.props?.email
-    //    => payload.customerUserEmail.email
-    //  payload.value?.payload?.customerUserEmail?.props?.email.value
-    //    => payload.customerUserEmail.email
-
     for (const [property] of Object.entries(modelObject)) {
+      schema.properties[property] = {};
+
       if (modelObject[property].value) {
         model[property] = modelObject[property].value;
 
-        schema.properties[property] = {};
         schema.properties[property]['type'] =
           typeof modelObject[property].value;
-      } else if (modelObject[property].props) {
-        model[property] = {};
-
-        schema.properties[property] = {};
-        schema.properties[property]['type'] = 'object';
-        schema.properties[property]['properties'] = {};
-
-        this.reduceModelOperation(
-          schema.properties[property],
-          model[property],
-          modelObject[property].props,
-        );
-        //  payload.value?.payload?.customerUserEmail?.clark?.email.value
-      } else if (typeof modelObject[property] === 'object') {
-        model[property] = {};
-
-        schema.properties[property] = {};
-        schema.properties[property]['type'] = 'object';
-        schema.properties[property]['properties'] = {};
-
-        this.reduceModelOperation(
-          schema.properties[property],
-          model[property],
-          modelObject[property],
-        );
       } else {
-        model[property] = modelObject[property];
+        model[property] = {};
 
-        schema.properties[property] = {};
-        schema.properties[property]['type'] = typeof modelObject[property];
+        schema.properties[property]['type'] = 'object';
+        schema.properties[property]['properties'] = {};
+
+        if (modelObject[property].props) {
+          this.reduceModelOperation(
+            schema.properties[property],
+            model[property],
+            modelObject[property].props,
+          );
+        } else if (typeof modelObject[property] === 'object') {
+          this.reduceModelOperation(
+            schema.properties[property],
+            model[property],
+            modelObject[property],
+          );
+        } else {
+          model[property] = modelObject[property];
+
+          schema.properties[property]['type'] = typeof modelObject[property];
+          delete schema.properties[property].properties;
+        }
       }
     }
   }
