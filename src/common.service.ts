@@ -11,7 +11,7 @@ export class CommonService {
     //  payload.value?.payload?.customerUserEmail?.props?.email.value
     //    => payload.customerUserEmail.email
 
-    if (payload.value) {
+    if (payload?.value) {
       if (payload.value.payload) {
         if (typeof payload.value.payload !== 'object') {
           payload['value'] = payload.value.payload;
@@ -55,7 +55,7 @@ export class CommonService {
     for (const [property] of Object.entries(modelObject)) {
       schema.properties[property] = {};
 
-      if (modelObject[property].value) {
+      if (modelObject[property]?.value) {
         model[property] = modelObject[property].value;
 
         schema.properties[property]['type'] =
@@ -66,13 +66,16 @@ export class CommonService {
         schema.properties[property]['type'] = 'object';
         schema.properties[property]['properties'] = {};
 
-        if (modelObject[property].props) {
+        if (modelObject[property]?.props) {
           this.reduceModelOperation(
             schema.properties[property],
             model[property],
             modelObject[property].props,
           );
-        } else if (typeof modelObject[property] === 'object') {
+        } else if (
+          typeof modelObject[property] === 'object' &&
+          modelObject[property] !== null
+        ) {
           this.reduceModelOperation(
             schema.properties[property],
             model[property],
