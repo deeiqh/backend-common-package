@@ -1,16 +1,20 @@
 import {
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
   Logger,
 } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { EVALUATED_OPERATION_OTP_RESULT } from './events/topics';
-import { OTP_OPERATION_MAX_MINUTES } from './send-operation-otp.guard';
+import { EVALUATED_OPERATION_OTP_RESULT } from '../consts/events.const';
 
 @Injectable()
 export class ValidatedOperationOtpGuard implements CanActivate {
-  constructor(private readonly eventEmitter: EventEmitter) {}
+  constructor(
+    private readonly eventEmitter: EventEmitter,
+    @Inject('OTP_MILLISECONDS_TO_EXPIRE')
+    private readonly otpMillisecondsToExpire: number,
+  ) {}
   logger = new Logger(ValidatedOperationOtpGuard.name);
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -36,9 +40,8 @@ export class ValidatedOperationOtpGuard implements CanActivate {
       }
     });
 
-    const maxMinutes = OTP_OPERATION_MAX_MINUTES;
-    const intervalTime = 100;
-    const maxIterations = (maxMinutes * 60 * 1000) / intervalTime;
+    const intervalMilliseconds = 100;
+    const maxIterations = this.otpMillisecondsToExpire / intervalMilliseconds;
     let iteration = 0;
     let intervalId: NodeJS.Timer;
 
@@ -57,7 +60,7 @@ export class ValidatedOperationOtpGuard implements CanActivate {
           resolve(false);
         }
         iteration++;
-      }, intervalTime);
+      }, intervalMilliseconds);
     });
 
     return isOtpValidated;

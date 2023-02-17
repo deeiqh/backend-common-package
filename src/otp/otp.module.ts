@@ -4,31 +4,39 @@ import {
   DynamicModule,
   Module,
 } from '@nestjs/common';
-import { ClientsModule, KafkaOptions } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
 import { EventEmitter } from 'events';
 import { ConsumerConfig, Kafka, KafkaConfig } from 'kafkajs';
 import {
   EVALUATED_OPERATION_OTP,
   EVALUATED_OPERATION_OTP_RESULT,
-} from './events/topics';
-import { GuardsService } from './guards.service';
-import { SendOperationOtpGuard } from './send-operation-otp.guard';
-import { ValidatedOperationOtpGuard } from './validated-operation-otp.guard';
-
-export interface IProvidersConfig {
-  cacheConfig: CacheManagerOptions;
-  kafkaConfig: KafkaOptions;
-}
+} from './consts/events.const';
+import { DEFAULT_OTP_MINUTES_TO_EXPIRE } from './consts/guards.const';
+import { SendOperationOtpGuard } from './guards/send-operation-otp.guard';
+import { ValidatedOperationOtpGuard } from './guards/validated-operation-otp.guard';
+import { OtpConfig } from './interfaces/otp-config.interface';
+import { ProvidersConfig } from './interfaces/providers-config.interface';
+import { OtpService } from './otp.service';
 
 @Module({})
-export class GuardsModule {
-  static forRoot(configs: IProvidersConfig): DynamicModule {
+export class OtpModule {
+  static forRoot(configs?: OtpConfig & ProvidersConfig): DynamicModule {
+    if (!configs) {
+      return { module: OtpModule };
+    }
+
     const { cacheConfig, kafkaConfig } = configs;
 
+    const otpMillisecondsToExpire =
+      (configs.otpMinutesToExpire ?? DEFAULT_OTP_MINUTES_TO_EXPIRE) * 60 * 1000;
+
     return {
-      module: GuardsModule,
+      module: OtpModule,
       imports: [
-        CacheModule.register<CacheManagerOptions>(cacheConfig),
+        CacheModule.register<CacheManagerOptions>({
+          ...cacheConfig,
+          ttl: otpMillisecondsToExpire,
+        }),
         ClientsModule.register([{ name: 'CLIENT_KAFKA', ...kafkaConfig }]),
       ],
       providers: [
@@ -68,15 +76,19 @@ export class GuardsModule {
         },
         SendOperationOtpGuard,
         ValidatedOperationOtpGuard,
-        GuardsService,
+        OtpService,
       ],
       exports: [
         CacheModule,
         ClientsModule,
         EventEmitter,
+        {
+          provide: 'OTP_MILLISECONDS_TO_EXPIRE',
+          useValue: otpMillisecondsToExpire,
+        },
         SendOperationOtpGuard,
         ValidatedOperationOtpGuard,
-        GuardsService,
+        OtpService,
       ],
     };
   }

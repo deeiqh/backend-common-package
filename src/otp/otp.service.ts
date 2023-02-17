@@ -1,14 +1,14 @@
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Cache } from 'cache-manager';
-import { EVALUATED_OPERATION_OTP } from './events/topics';
+import { EVALUATED_OPERATION_OTP } from './consts/events.const';
 
 export interface ResultMessage {
   resultMessage: { message: string; statusCode: string };
 }
 
 @Injectable()
-export class GuardsService {
+export class OtpService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject('CLIENT_KAFKA') private readonly clientKafka: ClientKafka,

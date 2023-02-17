@@ -8,9 +8,7 @@ import {
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { Cache } from 'cache-manager';
-import { SEND_OPERATION_OTP } from './events/topics';
-
-export const OTP_OPERATION_MAX_MINUTES = 1;
+import { SEND_OPERATION_OTP } from '../consts/events.const';
 
 @Injectable()
 export class SendOperationOtpGuard implements CanActivate {
@@ -48,13 +46,9 @@ export class SendOperationOtpGuard implements CanActivate {
       otp,
     });
 
-    await this.cacheManager.set(
-      operationUUID,
-      {
-        otp,
-      },
-      OTP_OPERATION_MAX_MINUTES * 60 * 1000,
-    );
+    await this.cacheManager.set(operationUUID, {
+      otp,
+    });
 
     return true;
   }

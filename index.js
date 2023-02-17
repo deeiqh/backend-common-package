@@ -2,17 +2,17 @@
 const { CommonModule } = require('./dist/common.module');
 const {
   SendOperationOtpGuard,
-} = require('./dist/guards/send-operation-otp.guard');
+} = require('./dist/otp/guards/send-operation-otp.guard');
 const {
   ValidatedOperationOtpGuard,
-} = require('./dist/guards/validated-operation-otp.guard');
-const { GuardsService } = require('./dist/guards/guards.service');
+} = require('./dist/otp/guards/validated-operation-otp.guard');
+const { OtpService } = require('./dist/otp/otp.service');
 const { CommonService } = require('./dist/common.service');
 
 module.exports = {
   CommonModule,
   SendOperationOtpGuard,
   ValidatedOperationOtpGuard,
-  GuardsService,
+  OtpService,
   CommonService,
 };
