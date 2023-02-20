@@ -7,10 +7,13 @@ export class CommonModule {
   static forRoot(configs: OtpConfig & ProvidersConfig): DynamicModule;
 }
 
+export class ReducePayloadModule {}
+
 export class SendOperationOtpGuard {}
 
 export class ValidatedOperationOtpGuard {}
 
+export const ReducePayload;
 export class OtpService {
   async validateOperationOtp(input: {
     operationUUID: string;
