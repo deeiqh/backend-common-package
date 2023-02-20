@@ -3,7 +3,7 @@ import { ResultMessage } from 'src/guards/validate-operation-otp';
 import { OtpConfig } from 'src/otp/interfaces/otp-config.interface';
 import { ProvidersConfig } from 'src/otp/interfaces/providers-config.interface';
 
-export class CommonModule {
+export class OtpModule {
   static forRoot(configs: OtpConfig & ProvidersConfig): DynamicModule;
 }
 
@@ -13,7 +13,6 @@ export class SendOperationOtpGuard {}
 
 export class ValidatedOperationOtpGuard {}
 
-export const ReducePayload;
 export class OtpService {
   async validateOperationOtp(input: {
     operationUUID: string;
@@ -21,7 +20,7 @@ export class OtpService {
   }): Promise<ResultMessage>;
 }
 
-export class CommonService {
+export class ReducePayloadService {
   reducePayload(payload: Record<string, any>): Record<string, any> | void;
 
   reduceModel(

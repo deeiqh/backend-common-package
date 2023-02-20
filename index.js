@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const { CommonModule } = require('./dist/common.module');
+const { OtpModule } = require('./dist/otp/otp.module');
+
 const {
   ReducePayloadModule,
 } = require('./dist/reduce-payload/reduce-payload.module');
@@ -7,23 +8,22 @@ const {
 const {
   SendOperationOtpGuard,
 } = require('./dist/otp/guards/send-operation-otp.guard');
+
 const {
   ValidatedOperationOtpGuard,
 } = require('./dist/otp/guards/validated-operation-otp.guard');
 
-const {
-  ReducePayload,
-} = require('./dist/reduce-payload/reduce-payload.decorator');
-
 const { OtpService } = require('./dist/otp/otp.service');
-const { CommonService } = require('./dist/common.service');
+
+const {
+  ReducePayloadService,
+} = require('./dist/reduce-payload/reduce-payload.service');
 
 module.exports = {
-  CommonModule,
+  OtpModule,
   ReducePayloadModule,
   SendOperationOtpGuard,
   ValidatedOperationOtpGuard,
-  ReducePayload,
   OtpService,
-  CommonService,
+  ReducePayloadService,
 };

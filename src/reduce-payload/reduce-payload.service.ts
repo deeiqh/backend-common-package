@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class CommonService {
+export class ReducePayloadService {
   reducePayload(payload: Record<string, any>): Record<string, any> | void {
     //examples:
     //  payload.value?.payload?.userId?.value

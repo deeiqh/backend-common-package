@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ReducePayload } from './reduce-payload.decorator';
+import { ReducePayload } from './decorators/reduce-payload.decorator';
 
 @Module({
   providers: [
