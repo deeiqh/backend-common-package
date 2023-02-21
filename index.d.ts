@@ -18,4 +18,6 @@ export class OtpService {
   }): Promise<ResultMessage>;
 }
 
-export const ReducePayload: () => ParameterDecorator;
+export const ReducePayload: (
+  payloadsSamples: Record<string, any>,
+) => ParameterDecorator;
