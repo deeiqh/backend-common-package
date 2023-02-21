@@ -50,18 +50,30 @@ function reduceModelOperation(
     if (modelObject[property]?.value) {
       model[property] = modelObject[property].value;
 
-      sample[property] = propertyFactory(modelObject[property].value);
+      sample[property] = propertyFactory(typeof modelObject[property].value);
     } else {
-      model[property] = {};
-
-      sample[property] = {};
-
       if (modelObject[property]?.props) {
-        reduceModelOperation(
-          sample[property],
-          model[property],
-          modelObject[property].props,
-        );
+        if (
+          Object.keys(modelObject[property].props).length === 1 &&
+          Object.keys(modelObject[property].props)[0] === 'value'
+        ) {
+          console.log(Object.keys(modelObject[property].props));
+          model[property] = modelObject[property].props.value;
+
+          sample[property] = propertyFactory(
+            typeof modelObject[property].props.value,
+          );
+        } else {
+          model[property] = {};
+
+          sample[property] = {};
+
+          reduceModelOperation(
+            sample[property],
+            model[property],
+            modelObject[property].props,
+          );
+        }
       } else if (
         typeof modelObject[property] === 'object' &&
         modelObject[property] !== null
