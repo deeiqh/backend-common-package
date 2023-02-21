@@ -7,8 +7,6 @@ export class OtpModule {
   static forRoot(configs: OtpConfig & ProvidersConfig): DynamicModule;
 }
 
-export class ReducePayloadModule {}
-
 export class SendOperationOtpGuard {}
 
 export class ValidatedOperationOtpGuard {}
@@ -18,21 +16,6 @@ export class OtpService {
     operationUUID: string;
     otp: string;
   }): Promise<ResultMessage>;
-}
-
-export class ReducePayloadService {
-  reducePayload(payload: Record<string, any>): Record<string, any> | void;
-
-  reduceModel(
-    model: Record<string, any>,
-    modelObject?: Record<string, any>,
-  ): Record<string, any>;
-
-  private reduceModelOperation(
-    schema: Record<string, any>,
-    model: Record<string, any>,
-    modelObject?: Record<string, any>,
-  ): void;
 }
 
 export const ReducePayload: () => ParameterDecorator;
