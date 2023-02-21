@@ -19,6 +19,10 @@ const {
   ReducePayloadService,
 } = require('./dist/reduce-payload/reduce-payload.service');
 
+const {
+  ReducePayload,
+} = require('./dist/reduce-payload/decorators/reduce-payload.decorator');
+
 module.exports = {
   OtpModule,
   ReducePayloadModule,
@@ -26,4 +30,5 @@ module.exports = {
   ValidatedOperationOtpGuard,
   OtpService,
   ReducePayloadService,
+  ReducePayload,
 };

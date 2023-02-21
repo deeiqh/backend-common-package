@@ -34,3 +34,5 @@ export class ReducePayloadService {
     modelObject?: Record<string, any>,
   ): void;
 }
+
+export const ReducePayload: () => ParameterDecorator;

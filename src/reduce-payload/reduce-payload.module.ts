@@ -1,13 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ReducePayload } from './decorators/reduce-payload.decorator';
+import { ReducePayloadService } from './reduce-payload.service';
 
 @Module({
-  providers: [
-    {
-      provide: 'REDUCE_PAYLOAD_DECORATOR',
-      useValue: ReducePayload,
-    },
-  ],
-  exports: ['REDUCE_PAYLOAD_DECORATOR'],
+  providers: [ReducePayloadService],
+  exports: [ReducePayloadService],
 })
 export class ReducePayloadModule {}
