@@ -7,13 +7,12 @@ export const ReducePayload = createParamDecorator(
     const request = context.switchToHttp().getRequest();
 
     const eventCategory = request.value.category;
-    const _payload = request;
+    const payload = request;
 
-    const payloadSample = reducePayload(_payload);
-
-    const logger = new Logger('Developer Experience');
+    const payloadSample = reducePayload(payload);
 
     if (!payloadsSamples[eventCategory]) {
+      const logger = new Logger('Developer Experience');
       logger.warn(
         `[ReducePayload decorator] To show the payload type instead of 'any', please restart the app.`,
       );
@@ -24,17 +23,18 @@ export const ReducePayload = createParamDecorator(
         const path = payloadsSamples.filePath;
         const content = `export const payloads = ${JSON.stringify(
           payloadsSamples,
-        )};
+          null,
+          2,
+        ).replace('"uuid-123-some-any-abc-uuid"', '"some-any" as any')};
         `;
-        console.log(path, '\n', content);
+
         await fs.writeFile(path, content);
       } catch (e) {
         delete payloadsSamples[eventCategory];
-
         logger.error(e.message);
       }
     }
 
-    return _payload;
+    return payload;
   },
 );

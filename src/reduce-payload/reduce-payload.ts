@@ -1,3 +1,5 @@
+import { propertyFactory } from './property.factory';
+
 export function reducePayload(
   payload: Record<string, any>,
 ): Record<string, any> | void {
@@ -15,10 +17,7 @@ export function reducePayload(
         payload['value'] = payload.value.payload;
 
         return {
-          type: 'object',
-          properties: {
-            value: { type: typeof payload.value.payload },
-          },
+          value: propertyFactory(typeof payload.value.payload),
         };
       } else {
         return reduceModel(payload, payload.value.payload);
@@ -31,18 +30,15 @@ export function reduceModel(
   model: Record<string, any>,
   modelObject?: Record<string, any>,
 ): Record<string, any> {
-  const schema: Record<string, any> = {
-    type: 'object',
-    properties: {},
-  };
+  const sample: Record<string, any> = { value: 'uuid-123-some-any-abc-uuid' };
 
-  reduceModelOperation(schema, model, modelObject);
+  reduceModelOperation(sample, model, modelObject);
 
-  return schema;
+  return sample;
 }
 
 function reduceModelOperation(
-  schema: Record<string, any>,
+  sample: Record<string, any>,
   model: Record<string, any>,
   modelObject?: Record<string, any>,
 ): void {
@@ -51,21 +47,24 @@ function reduceModelOperation(
   }
 
   for (const [property] of Object.entries(modelObject)) {
-    schema.properties[property] = {};
+    // schema.properties[property] = {};
 
     if (modelObject[property]?.value) {
       model[property] = modelObject[property].value;
 
-      schema.properties[property]['type'] = typeof modelObject[property].value;
+      // schema.properties[property]['type'] = typeof modelObject[property].value;
+      sample[property] = propertyFactory(modelObject[property].value);
     } else {
       model[property] = {};
 
-      schema.properties[property]['type'] = 'object';
-      schema.properties[property]['properties'] = {};
+      // schema.properties[property]['type'] = 'object';
+      // schema.properties[property]['properties'] = {};
+      sample[property] = {};
 
       if (modelObject[property]?.props) {
         reduceModelOperation(
-          schema.properties[property],
+          // schema.properties[property],
+          sample[property],
           model[property],
           modelObject[property].props,
         );
@@ -74,15 +73,17 @@ function reduceModelOperation(
         modelObject[property] !== null
       ) {
         reduceModelOperation(
-          schema.properties[property],
+          // schema.properties[property],
+          sample[property],
           model[property],
           modelObject[property],
         );
       } else {
         model[property] = modelObject[property];
 
-        schema.properties[property]['type'] = typeof modelObject[property];
-        delete schema.properties[property].properties;
+        // schema.properties[property]['type'] = typeof modelObject[property];
+        sample[property] = propertyFactory(typeof modelObject[property]);
+        // delete schema.properties[property].properties;
       }
     }
   }
