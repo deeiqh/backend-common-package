@@ -47,23 +47,17 @@ function reduceModelOperation(
   }
 
   for (const [property] of Object.entries(modelObject)) {
-    // schema.properties[property] = {};
-
     if (modelObject[property]?.value) {
       model[property] = modelObject[property].value;
 
-      // schema.properties[property]['type'] = typeof modelObject[property].value;
       sample[property] = propertyFactory(modelObject[property].value);
     } else {
       model[property] = {};
 
-      // schema.properties[property]['type'] = 'object';
-      // schema.properties[property]['properties'] = {};
       sample[property] = {};
 
       if (modelObject[property]?.props) {
         reduceModelOperation(
-          // schema.properties[property],
           sample[property],
           model[property],
           modelObject[property].props,
@@ -73,7 +67,6 @@ function reduceModelOperation(
         modelObject[property] !== null
       ) {
         reduceModelOperation(
-          // schema.properties[property],
           sample[property],
           model[property],
           modelObject[property],
@@ -81,9 +74,7 @@ function reduceModelOperation(
       } else {
         model[property] = modelObject[property];
 
-        // schema.properties[property]['type'] = typeof modelObject[property];
         sample[property] = propertyFactory(typeof modelObject[property]);
-        // delete schema.properties[property].properties;
       }
     }
   }
