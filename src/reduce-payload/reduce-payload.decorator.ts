@@ -4,7 +4,7 @@ import * as fs from 'fs/promises';
 
 export const ReducePayload = createParamDecorator(
   async (payloadsSamples: Record<string, any>, context: ExecutionContext) => {
-    const logger = new Logger('ReducePayload decorator');
+    const logger = new Logger('@ReducePayload(payloads) PARAMETER DECORATOR');
 
     const request = context.switchToHttp().getRequest();
 
@@ -44,7 +44,7 @@ export const ReducePayload = createParamDecorator(
         await fs.writeFile(path, newContent);
 
         logger.warn(
-          `[Developer Experience] To show the updated payload type, please restart the app.`,
+          `[EVENT]: ${eventCategory} [DEVELOPER EXPERIENCE]: To show the updated payload type assign 'typeof payloads['${eventCategory}']' to 'payload' parameter`,
         );
       }
     } catch (e) {
