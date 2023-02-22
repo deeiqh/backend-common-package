@@ -21,6 +21,10 @@ export const ReducePayload = createParamDecorator(
       const fileJSON = JSON.stringify(
         JSON.parse(
           (await fs.readFile(path, { encoding: 'utf8' }))
+            .replace(
+              /`\$\{__filename\.replace\(\/\(\.\+\)\\\/dist\(\.\+\)\(\\\.js\)\/, '\$1\$2\.ts'\)\}`/,
+              `'${path}'`,
+            )
             .replace(/.+\s+=\s+{(.+)};/s, '{$1}')
             .replace(/(['"])?([a-z0-9A-Z_-]+)(['"])?:/g, '"$2": ')
             .replace(/'/g, `"`)
