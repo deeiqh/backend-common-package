@@ -14,7 +14,7 @@ export function reducePayload(
   if (payload?.value) {
     if (payload.value.payload) {
       if (typeof payload.value.payload !== 'object') {
-        payload['value'] = payload.value.payload;
+        payload['value'] = propertyFactory(typeof payload.value.payload);
 
         return {
           value: propertyFactory(typeof payload.value.payload),
@@ -30,7 +30,7 @@ export function reduceModel(
   model: Record<string, any>,
   modelObject?: Record<string, any>,
 ): Record<string, any> {
-  const sample: Record<string, any> = { value: 'uuid-123-some-any-abc-uuid' };
+  const sample: Record<string, any> = { value: 'some-any' };
 
   reduceModelOperation(sample, model, modelObject);
 
