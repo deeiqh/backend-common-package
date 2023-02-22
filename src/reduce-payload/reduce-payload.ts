@@ -57,7 +57,6 @@ function reduceModelOperation(
           Object.keys(modelObject[property].props).length === 1 &&
           Object.keys(modelObject[property].props)[0] === 'value'
         ) {
-          console.log(Object.keys(modelObject[property].props));
           model[property] = modelObject[property].props.value;
 
           sample[property] = propertyFactory(

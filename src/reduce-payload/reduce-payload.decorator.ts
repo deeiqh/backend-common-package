@@ -10,29 +10,65 @@ export const ReducePayload = createParamDecorator(
     const payload = request;
 
     const payloadSample = reducePayload(payload);
+    payloadsSamples[eventCategory] = payloadSample;
 
-    if (!payloadsSamples[eventCategory]) {
-      const logger = new Logger('Developer Experience');
-      logger.warn(
-        `[ReducePayload decorator] To show the payload type instead of 'any', please restart the app.`,
-      );
-
-      try {
-        payloadsSamples[eventCategory] = payloadSample;
-
-        const path = payloadsSamples.filePath;
-        const content = `export const payloads = ${JSON.stringify(
-          payloadsSamples,
-          null,
-          2,
-        ).replace('"uuid-123-some-any-abc-uuid"', '"some-any" as any')};
+    const logger = new Logger('ReducePayload decorator');
+    try {
+      const path = payloadsSamples.filePath;
+      const newContent = `export const payloads = ${JSON.stringify(
+        payloadsSamples,
+        null,
+        2,
+      ).replace('"uuid-123-some-any-abc-uuid"', '"some-any" as any')};
         `;
 
-        await fs.writeFile(path, content);
-      } catch (e) {
-        delete payloadsSamples[eventCategory];
-        logger.error(e.message);
+      const fileContent = await fs.readFile(path, {
+        encoding: 'utf8',
+      });
+      console.log(
+        'AAAA',
+        JSON.stringify(payloadsSamples).replace(
+          /uuid-123-some-any-abc-uuid/g,
+          'some-any',
+        ),
+        'BBB',
+
+        JSON.stringify(
+          JSON.parse(
+            fileContent
+              .replace(/.+\s+=\s+{(.+)};/s, '{$1}')
+              .replace(/(['"])?([a-z0-9A-Z_-]+)(['"])?:/g, '"$2": ')
+              .replace(/'/g, `"`)
+              .replace(/,\n(\s+)?}/g, '\n}')
+              .replace(/as any/g, ''),
+          ),
+        ),
+      );
+      if (
+        JSON.stringify(payloadsSamples).replace(
+          /uuid-123-some-any-abc-uuid/g,
+          'some-any',
+        ) !==
+        JSON.stringify(
+          JSON.parse(
+            fileContent
+              .replace(/.+\s+=\s+{(.+)};/s, '{$1}')
+              .replace(/(['"])?([a-z0-9A-Z_-]+)(['"])?:/g, '"$2": ')
+              .replace(/'/g, `"`)
+              .replace(/,\n(\s+)?}/g, '\n}')
+              .replace(/as any/g, ''),
+          ),
+        )
+      ) {
+        await fs.writeFile(path, newContent);
+
+        logger.warn(
+          `[Developer Experience] To show the updated payload type, please restart the app.`,
+        );
       }
+    } catch (e) {
+      delete payloadsSamples[eventCategory];
+      logger.error(e.message);
     }
 
     return payload;
