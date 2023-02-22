@@ -3,7 +3,7 @@ import { reducePayload } from './reduce-payload';
 import * as fs from 'fs/promises';
 
 export const ReducePayload = createParamDecorator(
-  async (payloadsSamples: any, context: ExecutionContext) => {
+  async (payloadsSamples: Record<string, any>, context: ExecutionContext) => {
     const logger = new Logger('ReducePayload decorator');
 
     const request = context.switchToHttp().getRequest();
