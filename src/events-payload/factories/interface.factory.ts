@@ -1,7 +1,7 @@
+import { Logger } from '@nestjs/common';
+import * as fs from 'fs/promises';
 import JsonToTS from 'json-to-ts';
 import { UserProps } from '../domain/user';
-import * as fs from 'fs/promises';
-import { Logger } from '@nestjs/common';
 
 export async function interfaceFactory(): Promise<void> {
   const user: Record<string, any> = new UserProps();
@@ -23,8 +23,12 @@ export async function interfaceFactory(): Promise<void> {
 
   const interfaces = JsonToTS(sample);
   interfaces[0] = interfaces[0].replace('RootObject', `I${domainName}`);
+  interfaces[0] = interfaces[0].replace('interface', `export interface`);
   interfaces.map(
-    (_interface) => (content += `${_interface.replace(/undefined/g, 'any')}\n`),
+    (_interface) =>
+      (content += `${_interface
+        .replace(/undefined/g, 'any')
+        .replace(/:/g, '?:')}\n`),
   );
 
   await fs.writeFile(
