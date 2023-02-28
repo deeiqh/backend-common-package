@@ -1,7 +1,9 @@
-import { NestFactory } from '@nestjs/core';
-import { OtpModule } from './otp/otp.module';
+import { interfaceFactory } from './events-payload/factories/interface.factory';
 
 async function bootstrap() {
-  await NestFactory.create(OtpModule);
+  // await NestFactory.create(OtpModule);
+
+  //await dtoFactoryTemplate('user');
+  await interfaceFactory();
 }
 bootstrap();
