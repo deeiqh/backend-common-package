@@ -8,12 +8,10 @@
     "access": "public"
   },
   "license": "ISC",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "index.ts",
   "files": [
     "dist",
-    "index.js",
-    "index.d.ts"
+    "index.ts"
   ],
   "scripts": {
     "build": "nest build",

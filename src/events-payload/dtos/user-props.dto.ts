@@ -1,4 +1,4 @@
-export interface IUserProps {
+export class UserPropsDto {
   id?: string;
   status?: string;
   email?: string;
@@ -30,13 +30,13 @@ export interface IUserProps {
   isHapiAgreement?: boolean;
   isDisclaimerLeadingProgram?: boolean;
 }
-interface UserBrokerApplicationData {
+export class UserBrokerApplicationData {
   providerId?: string;
   providerName?: string;
   externalId?: string;
   application?: Application;
 }
-interface Application {
+export class Application {
   givenName?: string;
   familyName?: string;
   legalName?: string;
@@ -45,12 +45,12 @@ interface Application {
   city?: string;
   postalCode?: string;
 }
-interface Documents {
+export class Documents {
   frontDocument?: string;
   backDocument?: string;
   documentData?: any;
 }
-interface Password {
+export class Password {
   value?: string;
   hashed?: boolean;
 }

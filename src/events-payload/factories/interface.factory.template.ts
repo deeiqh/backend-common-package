@@ -1,7 +1,7 @@
 `import {DomainProps}
 all DomainPropertyProps imports
 
-export function interfaceFactory(): void {
+export function dtoFactory(): void {
   const domain: Record<string, any> = new DomainProps();
   const domainName = DomainProps.name;
 }`;
