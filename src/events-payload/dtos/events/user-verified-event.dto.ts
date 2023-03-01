@@ -1,3 +1,3 @@
-import { UserDto } from './user.dto';
+import { UserDto } from '../domain/user.dto';
 
 export class UserVerifiedEventDto extends UserDto {}

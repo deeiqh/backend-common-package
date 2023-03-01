@@ -61,9 +61,9 @@
 import { ReducePayload } from './src/events-payload/decorators/reduce-payload.decorator';
 export { ReducePayload };
 
-import { UserVerifiedEventDto } from './src/events-payload/dtos/user-verified-event.dto';
+import { UserVerifiedEventDto } from './src/events-payload/dtos/events/user-verified-event.dto';
 export { UserVerifiedEventDto };
 
 export class AB {
-  kiuwi: string;
+  kiuwit: string;
 }
