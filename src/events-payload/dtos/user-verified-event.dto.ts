@@ -1,3 +1,3 @@
-import { UserPropsDto } from './user-props.dto';
+import { UserDto } from './user.dto';
 
-export class UserVerifiedEventDto extends UserPropsDto {}
+export class UserVerifiedEventDto extends UserDto {}

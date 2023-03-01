@@ -1,4 +1,4 @@
-export class UserPropsDto {
+export class UserDto {
   id?: string;
   status?: string;
   email?: string;

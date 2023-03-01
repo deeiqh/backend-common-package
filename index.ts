@@ -57,10 +57,11 @@
 //   ReducePayload,
 //   // UserVerifiedEventDto,
 // };
-import { ReducePayload } from './dist/src/events-payload/decorators/reduce-payload.decorator';
+
+import { ReducePayload } from './src/events-payload/decorators/reduce-payload.decorator';
 export { ReducePayload };
 
-import { UserVerifiedEventDto } from './dist/src/events-payload/dtos/user-verified-event.dto';
+import { UserVerifiedEventDto } from './src/events-payload/dtos/user-verified-event.dto';
 export { UserVerifiedEventDto };
 
 export class AB {

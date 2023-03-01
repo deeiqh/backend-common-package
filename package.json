@@ -8,10 +8,9 @@
     "access": "public"
   },
   "license": "ISC",
-  "main": "index.ts",
+  "main": "index.d.ts",
   "files": [
-    "dist",
-    "index.ts"
+    "dist"
   ],
   "scripts": {
     "build": "nest build",

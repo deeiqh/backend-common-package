@@ -1,9 +1,8 @@
 `import {DomainProps}
-all DomainPropertyProps imports
 
-export function dtoFactory(): void {
+export async function domainDtoFactory(): Promise<void> {
   const domain: Record<string, any> = new DomainProps();
-  const domainName = DomainProps.name;
+  const domainName = DomainProps.name.replace('Props', '');
 }`;
 
 // select service repo > service domain interfaces, which one you want
