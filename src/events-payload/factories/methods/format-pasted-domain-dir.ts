@@ -13,14 +13,13 @@ export async function formatPastedDomainDir(
     .join(__dirname, '..', '..', 'domain')
     .replace('/dist', '');
 
-  const domainInterfacePath = path
+  const domainFolderInterfacePath = path
     .join(domainFolderPath, 'interfaces', `${domainName}.interface.ts`)
     .replace('/dist', '');
 
-  let domainInterface;
-
+  let domainInterfaceContent: string;
   try {
-    domainInterface = await fs.readFile(domainInterfacePath, {
+    domainInterfaceContent = await fs.readFile(domainFolderInterfacePath, {
       encoding: 'utf-8',
     });
   } catch (err) {
@@ -30,76 +29,16 @@ export async function formatPastedDomainDir(
     return false;
   }
 
-  const props: Record<string, string> = {
+  const domainProps: Record<string, string> = {
     required: '',
     optional: '',
   };
-  let imports = '';
 
-  const getpropsRegex = (propsType: string) =>
-    new RegExp(`(.+)(interface) (\\w+${propsType}) {([^}]+)}(.+)`, 's');
-
-  const requiredProps = domainInterface.replace(
-    getpropsRegex('RequiredProps'),
-    '$4',
+  const imports = formatImports(
+    domainInterfaceContent,
+    domainProps,
+    domainName,
   );
-
-  const addPropsToImports = (propsType: string, propsValue: string) => {
-    props[propsType] = propsValue
-      .replace(/(.+: )([^;]+)/g, '$1$2Props = new $2Props()')
-      .replace(/booleanProps = new booleanProps\(\)/g, 'boolean = false');
-    imports += props[propsType]
-      .replace(
-        /(\w+)(\??): ([^=]+)(.+)/g,
-        (match, property, optional, type) =>
-          `import { ${type}} from './${domainName}-${property}';`,
-      )
-      .replace(/import { boolean } from (.+)\n/g, '');
-  };
-
-  addPropsToImports('required', requiredProps);
-
-  const optionalProps = domainInterface.replace(
-    getpropsRegex('OptionalProps'),
-    '$4',
-  );
-
-  addPropsToImports('optional', optionalProps);
-
-  const onlyOnce = new Set<string>();
-  const toDeleteCounter: string[] = [];
-
-  const fixedImportFile = imports.split('\n').map((oneImport) => {
-    if (!oneImport.includes('import')) return '';
-    const split = oneImport.split('./');
-    const part = split[1].replace(/([A-Z])/g, '-$1').toLowerCase();
-    const [check, ...rest] = part.split('-');
-    let final = part;
-    if (check === rest[0]) {
-      final = rest.join('-');
-    }
-
-    const property = oneImport.replace(/(.+){ (\w+) }(.+)/, '$2');
-
-    if (onlyOnce.has(property)) {
-      toDeleteCounter.push(property);
-      return '';
-    }
-    onlyOnce.add(property);
-
-    return split[0] + './' + final + '\n';
-  });
-
-  imports = fixedImportFile.join('');
-
-  toDeleteCounter.forEach((property) => {
-    const regex = new RegExp(`(import { ${property} } from './)(.+)-(.+)`);
-    imports = imports.replace(regex, `$1$2';`);
-  });
-
-  const files = await fs.readdir(domainFolderPath);
-
-  let fileContent;
 
   const domainNewContentFolderPath = path
     .join(__dirname, '..', '..', 'domain-replaced')
@@ -112,28 +51,168 @@ export async function formatPastedDomainDir(
     }
   }
 
-  for (const fileName of files) {
-    if (fileName.search(`${domainName}-`) !== -1) {
-      const filePath = path.join(domainFolderPath, fileName);
-      fileContent = await fs.readFile(filePath, { encoding: 'utf-8' });
+  const domainFolderFiles = await fs.readdir(domainFolderPath);
+  if (
+    !(await formatPropsFiles(
+      domainFolderFiles,
+      domainName,
+      domainFolderPath,
+      logger,
+      domainNewContentFolderPath,
+    ))
+  ) {
+    return false;
+  }
+
+  const dtoContent = `${imports}\nexport class ${capitalize(
+    domainName,
+  )}Props {  ${domainProps.required}  ${domainProps.optional}}\n`;
+
+  await fs.writeFile(
+    path.join(domainNewContentFolderPath, `${domainName}.ts`),
+    dtoContent,
+  );
+
+  logger.log(`Pasted ${domainName} directory was formatted.`);
+  return true;
+}
+
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+///////////////////
+
+function getpropsRegex(propsType: string) {
+  return new RegExp(`(.+)(interface) (\\w+${propsType}) {([^}]+)}(.+)`, 's');
+}
+
+function addProps(
+  propsType: string,
+  propsValue: string,
+  domainProps: Record<string, string>,
+  domainName: string,
+) {
+  domainProps[propsType] = propsValue
+    .replace(/(.+: )([^;]+)/g, '$1$2Props = new $2Props()')
+    .replace(/booleanProps = new booleanProps\(\)/g, 'boolean = false');
+
+  return domainProps[propsType]
+    .replace(
+      /(\w+)(\??): ([^=]+)(.+)/g,
+      (match: string, property: string, optional: string, type: string) =>
+        `import { ${type}} from './${domainName}-${property}';`,
+    )
+    .replace(/import { boolean } from (.+)\n/g, '');
+}
+
+function formatImports(
+  domainInterface: string,
+  domainProps: Record<string, string>,
+  domainName: string,
+) {
+  let imports = '';
+
+  imports += addProps(
+    'required',
+    domainInterface.replace(getpropsRegex('RequiredProps'), '$4'),
+    domainProps,
+    domainName,
+  );
+
+  imports += addProps(
+    'optional',
+    domainInterface.replace(getpropsRegex('OptionalProps'), '$4'),
+    domainProps,
+    domainName,
+  );
+
+  const onlyOneImport = new Set<string>();
+  const repeatedImports: string[] = [];
+
+  imports = fixImportPathAndRemoveDuplicates(
+    imports,
+    onlyOneImport,
+    repeatedImports,
+  ).join('');
+
+  repeatedImports.forEach((property) => {
+    const regex = new RegExp(`(import { ${property} } from './)(.+)-(.+)`);
+    imports = imports.replace(regex, `$1$2';`);
+  });
+
+  return imports;
+}
+
+function fixImportPathAndRemoveDuplicates(
+  imports: string,
+  onlyOneImport: Set<string>,
+  repeatedImports: string[],
+): string[] {
+  return imports.split('\n').map((oneImport) => {
+    if (!oneImport.includes('import')) return '';
+
+    const split = oneImport.split('./');
+    const part = split[1].replace(/([A-Z])/g, '-$1').toLowerCase();
+    const [check, ...rest] = part.split('-');
+
+    let final = part;
+
+    if (check === rest[0]) {
+      final = rest.join('-');
+    }
+
+    const property = oneImport.replace(/(.+){ (\w+) }(.+)/, '$2');
+
+    if (onlyOneImport.has(property)) {
+      repeatedImports.push(property);
+      return '';
+    }
+
+    onlyOneImport.add(property);
+
+    return split[0] + './' + final + '\n';
+  });
+}
+
+async function formatPropsFiles(
+  domainFolderFiles: string[],
+  domainName: string,
+  domainFolderPath: string,
+  logger: Logger,
+  domainNewContentFolderPath: string,
+): Promise<boolean> {
+  for (const propFileName of domainFolderFiles) {
+    if (propFileName.search(`${domainName}-`) !== -1) {
+      const propFilePath = path.join(domainFolderPath, propFileName);
+
+      const propFileContentRaw = await fs.readFile(propFilePath, {
+        encoding: 'utf-8',
+      });
 
       const regex = new RegExp(
         `(.+)interface I?(${fileNameToPascalCase(
-          fileName,
+          propFileName,
         )}Props) ({([a-z]|[A-Z]|[0-9]|:|;|{|};|\\s|\\]|\\[|\\?|_)+}\n)(.+)`,
         's',
       );
-      const fixedFileContent = fileContent.replace(regex, 'export class $2 $3');
+
+      const propFileContent = propFileContentRaw.replace(
+        regex,
+        'export class $2 $3',
+      );
 
       if (
-        fixedFileContent === fileContent &&
-        'export class' !== fileContent.slice(0, 'export class'.length)
+        propFileContent === propFileContentRaw &&
+        propFileContentRaw.slice(0, 'export class'.length) !== 'export class'
       ) {
-        logger.error(`Can't parse ${fileName}`);
+        logger.error(`Can't parse ${propFileName}`);
         return false;
       }
 
-      const template = (
+      const linePropFormatTemplate = (
         spaces4orMany: string | undefined,
         spaces2: string | undefined,
         property: string,
@@ -163,13 +242,13 @@ export async function formatPastedDomainDir(
         return `${base}${assign}`;
       };
 
-      const initializedFileContent = fixedFileContent
+      const fixedPropFileContent = propFileContent
         .replace(
           /\n(    |      |        )?(  )?(\w+)(\?)?: (\w+(\[\])?);/g,
           (match, spaces4orMany, spaces2, property, optional, type) => {
             switch (type) {
               case 'string':
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -177,7 +256,7 @@ export async function formatPastedDomainDir(
                   `'some-string'`,
                 );
               case 'number':
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -185,7 +264,7 @@ export async function formatPastedDomainDir(
                   '1',
                 );
               case 'boolean':
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -193,7 +272,7 @@ export async function formatPastedDomainDir(
                   'false',
                 );
               case 'Date':
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -201,7 +280,7 @@ export async function formatPastedDomainDir(
                   'new Date()',
                 );
               case 'any':
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -210,7 +289,7 @@ export async function formatPastedDomainDir(
                   'any',
                 );
               case 'string[]':
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -218,7 +297,7 @@ export async function formatPastedDomainDir(
                   `['some-string']`,
                 );
               case 'number[]':
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -226,7 +305,7 @@ export async function formatPastedDomainDir(
                   `[1]`,
                 );
               case 'boolean[]':
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -234,7 +313,7 @@ export async function formatPastedDomainDir(
                   `[false]`,
                 );
               default:
-                return template(
+                return linePropFormatTemplate(
                   spaces4orMany,
                   spaces2,
                   property,
@@ -247,8 +326,8 @@ export async function formatPastedDomainDir(
         .replace(/: {/g, ' = {');
 
       await fs.writeFile(
-        path.join(domainNewContentFolderPath, fileName),
-        initializedFileContent,
+        path.join(domainNewContentFolderPath, propFileName),
+        fixedPropFileContent,
         {
           encoding: 'utf-8',
         },
@@ -256,15 +335,5 @@ export async function formatPastedDomainDir(
     }
   }
 
-  const dtoContent = `${imports}\nexport class ${capitalize(
-    domainName,
-  )}Props {  ${props.required}  ${props.optional}}\n`;
-
-  await fs.writeFile(
-    path.join(domainNewContentFolderPath, `${domainName}.ts`),
-    dtoContent,
-  );
-
-  logger.log(`Pasted ${domainName} directory was formatted.`);
   return true;
 }
