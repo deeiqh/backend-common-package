@@ -63,7 +63,3 @@ export { ReducePayload };
 
 import { UserVerifiedEventDto } from './src/events-payload/dtos/events/user-verified-event.dto';
 export { UserVerifiedEventDto };
-
-export class AB {
-  kiuwit: string;
-}
