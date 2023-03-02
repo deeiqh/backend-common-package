@@ -30,35 +30,41 @@ export async function formatPastedDomainDir(
     return false;
   }
 
-  const props = {
+  const props: Record<string, string> = {
     required: '',
     optional: '',
   };
   let imports = '';
 
+  const getpropsRegex = (propsType: string) =>
+    new RegExp(`(.+)(interface) (\\w+${propsType}) {([^}]+)}(.+)`, 's');
+
   const requiredProps = domainInterface.replace(
-    /(.+)(interface) (\w+RequiredProps) {([^}]+)}(.+)/s,
+    getpropsRegex('RequiredProps'),
     '$4',
   );
-  props.required = requiredProps
-    .replace(/(.+: )([^;]+)/g, '$1$2Props = new $2Props()')
-    .replace(/booleanProps = new booleanProps\(\)/g, 'boolean = false');
 
-  imports += props.required
-    .replace(/(\w+): ([^=]+)(.+)/g, `import { $2} from './${domainName}-$1';`)
-    .replace(/import { boolean } from (.+)\n/g, '');
+  const addPropsToImports = (propsType: string, propsValue: string) => {
+    props[propsType] = propsValue
+      .replace(/(.+: )([^;]+)/g, '$1$2Props = new $2Props()')
+      .replace(/booleanProps = new booleanProps\(\)/g, 'boolean = false');
+    imports += props[propsType]
+      .replace(
+        /(\w+)(\??): ([^=]+)(.+)/g,
+        (match, property, optional, type) =>
+          `import { ${type}} from './${domainName}-${property}';`,
+      )
+      .replace(/import { boolean } from (.+)\n/g, '');
+  };
+
+  addPropsToImports('required', requiredProps);
 
   const optionalProps = domainInterface.replace(
-    /(.+)(interface) (\w+OptionalProps) {([^}]+)}(.+)/s,
+    getpropsRegex('OptionalProps'),
     '$4',
   );
-  props.optional = optionalProps
-    .replace(/(.+: )([^;]+)/g, '$1$2Props = new $2Props()')
-    .replace(/booleanProps = new booleanProps\(\)/g, 'boolean = false');
 
-  imports += props.optional
-    .replace(/(\w+)\?: ([^=]+)(.+)/g, `import { $2} from './${domainName}-$1';`)
-    .replace(/import { boolean } from (.+)\n/g, '');
+  addPropsToImports('optional', optionalProps);
 
   const onlyOnce = new Set<string>();
   const toDeleteCounter: string[] = [];
