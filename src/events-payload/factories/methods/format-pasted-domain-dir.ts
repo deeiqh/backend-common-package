@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 import { fileNameToPascalCase } from 'src/events-payload/utils/methods/file-name-to-pascal-case';
 import { Logger } from '@nestjs/common';
+import { capitalize } from 'src/events-payload/utils/methods/capitalize';
 
 export async function formatPastedDomainDir(
   domainName: string,
@@ -226,6 +227,15 @@ export async function formatPastedDomainDir(
       );
     }
   });
+
+  const dtoContent = `${imports}\nexport class ${capitalize(
+    domainName,
+  )}Dto {  ${props.required}  ${props.optional}}\n`;
+
+  await fs.writeFile(
+    path.join(domainNewContentFolderPath, `${domainName}.dto.ts`),
+    dtoContent,
+  );
 
   return true;
 }
