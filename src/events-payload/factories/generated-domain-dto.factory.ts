@@ -1,17 +1,12 @@
-/*
 import { Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import JsonToTS from 'json-to-ts';
-import { UserProps } from '../domain/user';
+import { UserProps } from '../domain-replaced/user';
 
-import {DomainProps}
-
-export async function generatedDomainDtoFactory(): Promise<void> {
-  const domain: Record<string, any> = new DomainProps();
-  const domainName = DomainProps.name.replace('Props', '');
-
-
+export async function generatedDomainDtoFactory(): Promise<boolean> {
   const user: Record<string, any> = new UserProps();
+
+  const domainName = UserProps.name.replace('Props', '');
 
   const sample: Record<string, any> = {};
 
@@ -45,5 +40,6 @@ export async function generatedDomainDtoFactory(): Promise<void> {
 
   const logger = new Logger('dtoFactory');
   logger.log(`${domainName}Dto created`);
-};
-*/
+
+  return true;
+}

@@ -7,6 +7,8 @@ import { capitalize } from 'src/events-payload/utils/methods/capitalize';
 export async function formatPastedDomainDir(
   domainName: string,
 ): Promise<boolean> {
+  const logger = new Logger('Format pasted domain dir');
+
   const domainFolderPath = path
     .join(__dirname, '..', '..', 'domain')
     .replace('/dist', '');
@@ -15,9 +17,18 @@ export async function formatPastedDomainDir(
     .join(domainFolderPath, 'interfaces', `${domainName}.interface.ts`)
     .replace('/dist', '');
 
-  const domainInterface = await fs.readFile(domainInterfacePath, {
-    encoding: 'utf-8',
-  });
+  let domainInterface;
+
+  try {
+    domainInterface = await fs.readFile(domainInterfacePath, {
+      encoding: 'utf-8',
+    });
+  } catch (err) {
+    logger.error(
+      `\nCan't open ${domainFolderPath}.\n  Please paste the 'domain' directory from ${domainName} service`,
+    );
+    return false;
+  }
 
   const props = {
     required: '',
@@ -81,6 +92,7 @@ export async function formatPastedDomainDir(
   });
 
   const files = await fs.readdir(domainFolderPath);
+
   let fileContent;
 
   const domainNewContentFolderPath = path
@@ -94,7 +106,7 @@ export async function formatPastedDomainDir(
     }
   }
 
-  files.forEach(async (fileName) => {
+  for (const fileName of files) {
     if (fileName.search(`${domainName}-`) !== -1) {
       const filePath = path.join(domainFolderPath, fileName);
       fileContent = await fs.readFile(filePath, { encoding: 'utf-8' });
@@ -111,7 +123,6 @@ export async function formatPastedDomainDir(
         fixedFileContent === fileContent &&
         'export class' !== fileContent.slice(0, 'export class'.length)
       ) {
-        const logger = new Logger('Format pasted domain dir');
         logger.error(`Can't parse ${fileName}`);
         return false;
       }
@@ -134,89 +145,100 @@ export async function formatPastedDomainDir(
         const base = `\n${spaces4orMany ?? ''}${spaces2 ?? ''}${property}${
           optional ?? ''
         }`;
-        const assign = `${assignSymbol} ${initValue};`;
+
+        let assign = `${assignSymbol} ${initValue};`;
+        if (assignSymbol === ':') {
+          assign = `${assignSymbol} ${initValue},`;
+        }
+
         if (type) {
           return `${base}: ${type} = ${initValue};`;
         }
         return `${base}${assign}`;
       };
 
-      const initializedFileContent = fixedFileContent.replace(
-        /\n(    |      |        )?(  )?(\w+)(\?)?: (\w+(\[\])?);/g,
-        (match, spaces4orMany, spaces2, property, optional, type) => {
-          switch (type) {
-            case 'string':
-              return template(
-                spaces4orMany,
-                spaces2,
-                property,
-                optional,
-                `'some-string'`,
-              );
-            case 'number':
-              return template(spaces4orMany, spaces2, property, optional, '1');
-            case 'boolean':
-              return template(
-                spaces4orMany,
-                spaces2,
-                property,
-                optional,
-                'false',
-              );
-            case 'Date':
-              return template(
-                spaces4orMany,
-                spaces2,
-                property,
-                optional,
-                'new Date()',
-              );
-            case 'any':
-              return template(
-                spaces4orMany,
-                spaces2,
-                property,
-                optional,
-                'undefined',
-                'any',
-              );
-            case 'string[]':
-              return template(
-                spaces4orMany,
-                spaces2,
-                property,
-                optional,
-                `['some-string']`,
-              );
-            case 'number[]':
-              return template(
-                spaces4orMany,
-                spaces2,
-                property,
-                optional,
-                `[1]`,
-              );
-            case 'boolean[]':
-              return template(
-                spaces4orMany,
-                spaces2,
-                property,
-                optional,
-                `[false]`,
-              );
-            default:
-              return template(
-                spaces4orMany,
-                spaces2,
-                property,
-                optional,
-                `'some-string'`,
-              );
-          }
-        },
-      );
-
-      // const fixObjects = initializedFileContent.repl;
+      const initializedFileContent = fixedFileContent
+        .replace(
+          /\n(    |      |        )?(  )?(\w+)(\?)?: (\w+(\[\])?);/g,
+          (match, spaces4orMany, spaces2, property, optional, type) => {
+            switch (type) {
+              case 'string':
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  `'some-string'`,
+                );
+              case 'number':
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  '1',
+                );
+              case 'boolean':
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  'false',
+                );
+              case 'Date':
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  'new Date()',
+                );
+              case 'any':
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  'undefined',
+                  'any',
+                );
+              case 'string[]':
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  `['some-string']`,
+                );
+              case 'number[]':
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  `[1]`,
+                );
+              case 'boolean[]':
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  `[false]`,
+                );
+              default:
+                return template(
+                  spaces4orMany,
+                  spaces2,
+                  property,
+                  optional,
+                  `'some-string'`,
+                );
+            }
+          },
+        )
+        .replace(/: {/g, ' = {');
 
       await fs.writeFile(
         path.join(domainNewContentFolderPath, fileName),
@@ -226,16 +248,17 @@ export async function formatPastedDomainDir(
         },
       );
     }
-  });
+  }
 
   const dtoContent = `${imports}\nexport class ${capitalize(
     domainName,
-  )}Dto {  ${props.required}  ${props.optional}}\n`;
+  )}Props {  ${props.required}  ${props.optional}}\n`;
 
   await fs.writeFile(
-    path.join(domainNewContentFolderPath, `${domainName}.dto.ts`),
+    path.join(domainNewContentFolderPath, `${domainName}.ts`),
     dtoContent,
   );
 
+  logger.log(`Pasted ${domainName} directory was formatted.`);
   return true;
 }

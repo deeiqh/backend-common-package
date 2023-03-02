@@ -1,11 +1,14 @@
 import { formatPastedDomainDir } from './methods/format-pasted-domain-dir';
-import { generateDomainDtoFactory } from './methods/generate-domain-dto-factory';
+import { generatedDomainDtoFactory } from './generated-domain-dto.factory';
 
-export async function domainDtoFactory(domainNameRaw: string): Promise<void> {
-  const domainName = domainNameRaw.toLowerCase();
+export async function domainDtoFactory(
+  domainNameRaw: string,
+): Promise<boolean> {
+  return (
+    domainNameRaw !== '' &&
+    (await formatPastedDomainDir(domainNameRaw.toLowerCase())) &&
+    //await generateDomainDtoFactory(domainName);
 
-  await formatPastedDomainDir(domainName);
-
-  const domainDtoFactory = await generateDomainDtoFactory(domainName);
-  domainDtoFactory();
+    (await generatedDomainDtoFactory())
+  );
 }
