@@ -1,8 +1,8 @@
-import { domainDtoFactory } from './events-payload/factories/domain-dto.factory';
+import { generateDomainDto } from './events-payload/factories/methods/domain-dto-factory';
 
 async function bootstrap() {
   // await NestFactory.create(OtpModule);
 
-  await domainDtoFactory('user');
+  await generateDomainDto('user');
 }
 bootstrap();

@@ -1,27 +1,23 @@
-/*
 import { Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import JsonToTS from 'json-to-ts';
-import { UserProps } from '../domain/user';
+import * as path from 'path';
+import { @Domain@Props } from '../domain-replaced/@domain@';
 
-import {DomainProps}
+export async function domainDtoFactory(): Promise<boolean> {
+  const @domain@: Record<string, any> = new @Domain@Props();
 
-export async function generatedDomainDtoFactory(): Promise<void> {
-  const domain: Record<string, any> = new DomainProps();
-  const domainName = DomainProps.name.replace('Props', '');
-
-
-  const user: Record<string, any> = new UserProps();
+  const domainName = @Domain@Props.name.replace('Props', '');
 
   const sample: Record<string, any> = {};
 
-  for (const property of Object.keys(user)) {
-    const entries = Object.entries(user[property]);
+  for (const property of Object.keys(@domain@)) {
+    const entries = Object.entries(@domain@[property]);
 
     if (entries.length === 1) {
       sample[property] = entries[0][1];
     } else {
-      sample[property] = user[property];
+      sample[property] = @domain@[property];
     }
   }
 
@@ -38,12 +34,14 @@ export async function generatedDomainDtoFactory(): Promise<void> {
         .replace(/:/g, '?:')}\n`),
   );
 
-  await fs.writeFile(
-    `/home/deeiqh/Documents/hapi/@hapi-corp/hapi-corp-backend-common-package/src/events-payload/dtos/domain/user.dto.ts`,
-    content,
-  );
+  const dtoPath = path
+    .join(__dirname, '..', 'dtos', 'domain', '@domain@.dto.ts')
+    .replace('/dist', '');
+
+  await fs.writeFile(dtoPath, content);
 
   const logger = new Logger('dtoFactory');
   logger.log(`${domainName}Dto created`);
-};
-*/
+
+  return true;
+}
