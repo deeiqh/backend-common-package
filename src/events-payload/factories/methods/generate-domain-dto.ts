@@ -8,8 +8,9 @@ export async function generateDomainDto(
   const domainName = domainNameRaw.toLowerCase();
 
   return (
-    domainName !== '' && (await formatPastedDomainDir(domainName)) //&&
-    // (await generateDomainDtoFactory(domainName)) &&
-    // (await domainDtoFactory())
+    domainName !== '' &&
+    (await formatPastedDomainDir(domainName)) &&
+    (await generateDomainDtoFactory(domainName)) &&
+    (await domainDtoFactory())
   );
 }
