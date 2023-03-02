@@ -105,8 +105,6 @@ export async function formatPastedDomainDir(
         's',
       );
       const fixedFileContent = fileContent.replace(regex, 'export class $2 $3');
-      // console.log(fixedFileContent);
-      //r = new RegExp(`(.+)export interface UserBrokerApplicationDataProps {([a-z]|[A-Z]|[0-9]|:|;|{|};|\\s)+}\n(.+)`,'s')
 
       if (
         fixedFileContent === fileContent &&
@@ -116,36 +114,103 @@ export async function formatPastedDomainDir(
         logger.error(`Can't parse ${fileName}`);
         return false;
       }
-      return true;
-      const template = (str: string, type = '') => {
-        const base = ` = ${str};`;
-        if (type) {
-          return `: ${type}${base}`;
+
+      const template = (
+        spaces4orMany: string | undefined,
+        spaces2: string | undefined,
+        property: string,
+        optional: string,
+        initValue: string,
+        type = '',
+      ) => {
+        let assignSymbol: string;
+        if (spaces4orMany) {
+          assignSymbol = ':';
+        } else {
+          assignSymbol = ' =';
         }
-        return base;
+
+        const base = `\n${spaces4orMany ?? ''}${spaces2 ?? ''}${property}${
+          optional ?? ''
+        }`;
+        const assign = `${assignSymbol} ${initValue};`;
+        if (type) {
+          return `${base}: ${type} = ${initValue};`;
+        }
+        return `${base}${assign}`;
       };
+
       const initializedFileContent = fixedFileContent.replace(
-        /: (\w+(\[\])?);/g,
-        (f, g) => {
-          switch (g) {
+        /\n(    |      |        )?(  )?(\w+)(\?)?: (\w+(\[\])?);/g,
+        (match, spaces4orMany, spaces2, property, optional, type) => {
+          switch (type) {
             case 'string':
-              return template(`'some-string'`);
+              return template(
+                spaces4orMany,
+                spaces2,
+                property,
+                optional,
+                `'some-string'`,
+              );
             case 'number':
-              return template('1');
+              return template(spaces4orMany, spaces2, property, optional, '1');
             case 'boolean':
-              return template('false');
+              return template(
+                spaces4orMany,
+                spaces2,
+                property,
+                optional,
+                'false',
+              );
             case 'Date':
-              return template('new Date()');
+              return template(
+                spaces4orMany,
+                spaces2,
+                property,
+                optional,
+                'new Date()',
+              );
             case 'any':
-              return template('undefined', 'any');
+              return template(
+                spaces4orMany,
+                spaces2,
+                property,
+                optional,
+                'undefined',
+                'any',
+              );
             case 'string[]':
-              return template(`['some-string']`);
+              return template(
+                spaces4orMany,
+                spaces2,
+                property,
+                optional,
+                `['some-string']`,
+              );
             case 'number[]':
-              return template(`[1]`);
+              return template(
+                spaces4orMany,
+                spaces2,
+                property,
+                optional,
+                `[1]`,
+              );
             case 'boolean[]':
-              return template(`[false]`);
+              return template(
+                spaces4orMany,
+                spaces2,
+                property,
+                optional,
+                `[false]`,
+              );
             default:
-              return template(`'some-string'`);
+              return template(
+                spaces4orMany,
+                spaces2,
+                property,
+                optional,
+                `'some-string'`,
+              );
           }
         },
       );
