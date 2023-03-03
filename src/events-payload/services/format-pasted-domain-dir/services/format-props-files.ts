@@ -21,9 +21,9 @@ export async function formatPropsFiles(
       });
 
       const regex = new RegExp(
-        `(.+)interface I?(${fileNameToPascalCase(
+        `(.*)interface I?(${fileNameToPascalCase(
           propFileName,
-        )}Props) ({([a-z]|[A-Z]|[0-9]|:|;|{|};|\\s|\\]|\\[|\\?|_)+}\n)(.+)`,
+        )}Props) ({([a-z]|[A-Z]|[0-9]|:|;|{|};|\\s|\\]|\\[|\\?|_)*}\n)(.*)`,
         's',
       );
 

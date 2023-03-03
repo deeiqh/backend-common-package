@@ -2,26 +2,26 @@ import { Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import JsonToTS from 'json-to-ts';
 import * as path from 'path';
-import { UserProps } from '../domain-replaced/user';
+import { AuthenticationProps } from '../domain-replaced/authentication';
 
 export async function domainDtoFactory(): Promise<boolean> {
-  const userProps: Record<string, any> = new UserProps();
+  const authenticationProps: Record<string, any> = new AuthenticationProps();
 
   const dtoObject: Record<string, any> = {};
 
-  for (const prop of Object.keys(userProps)) {
-    const entries = Object.entries(userProps[prop]);
+  for (const prop of Object.keys(authenticationProps)) {
+    const entries = Object.entries(authenticationProps[prop]);
 
     if (entries.length === 1) {
       dtoObject[prop] = entries[0][1];
     } else {
-      dtoObject[prop] = userProps[prop];
+      dtoObject[prop] = authenticationProps[prop];
     }
   }
 
   const dtoObjectInterfaces = JsonToTS(dtoObject);
 
-  const domainName = UserProps.name.replace('Props', '');
+  const domainName = AuthenticationProps.name.replace('Props', '');
 
   dtoObjectInterfaces[0] = dtoObjectInterfaces[0].replace(
     'RootObject',
@@ -39,7 +39,7 @@ export async function domainDtoFactory(): Promise<boolean> {
   );
 
   const dtoPath = path
-    .join(__dirname, '..', 'dtos', 'domain', 'user.dto.ts')
+    .join(__dirname, '..', 'dtos', 'domain', 'authentication.dto.ts')
     .replace('/dist', '');
 
   await fs.writeFile(dtoPath, dtoContent);

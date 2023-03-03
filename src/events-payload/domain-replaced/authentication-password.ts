@@ -1,4 +1,4 @@
-export class UserPasswordProps {
+export class AuthenticationPasswordProps {
   value = 'some-string';
   hashed? = false;
 }

@@ -25,7 +25,7 @@ export const ReducePayload = createParamDecorator(
               /`\$\{__filename\.replace\(\/\(\.\+\)\\\/dist\(\.\+\)\(\\\.js\)\/, '\$1\$2\.ts'\)\}`/,
               `'${path}'`,
             )
-            .replace(/.+\s+=\s+{(.+)};/s, '{$1}')
+            .replace(/.+\s+=\s+{(.*)};/s, '{$1}')
             .replace(/(['"])?([a-z0-9A-Z_-]+)(['"])?:/g, '"$2": ')
             .replace(/'/g, `"`)
             .replace(/,\n(\s+)?}/g, '\n}')
