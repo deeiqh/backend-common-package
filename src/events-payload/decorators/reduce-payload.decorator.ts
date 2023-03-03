@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { reducePayload } from './methods/reduce-payload';
+import { reducePayload } from './services/reduce-payload';
 
 export const ReducePayload = createParamDecorator(
   async (payloadsSamples: Record<string, any>, context: ExecutionContext) => {

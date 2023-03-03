@@ -17,5 +17,12 @@
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
+  },
+  "watchOptions": {
+    "excludeFiles": [
+      "src/events-payload/domain",
+      "src/events-payload/domain-replaced",
+      "src/events-payload/factories/templates"
+    ]
   }
 }

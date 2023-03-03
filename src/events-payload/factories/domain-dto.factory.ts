@@ -5,30 +5,34 @@ import * as path from 'path';
 import { UserProps } from '../domain-replaced/user';
 
 export async function domainDtoFactory(): Promise<boolean> {
-  const user: Record<string, any> = new UserProps();
+  const userProps: Record<string, any> = new UserProps();
 
-  const domainName = UserProps.name.replace('Props', '');
+  const dtoObject: Record<string, any> = {};
 
-  const sample: Record<string, any> = {};
-
-  for (const property of Object.keys(user)) {
-    const entries = Object.entries(user[property]);
+  for (const prop of Object.keys(userProps)) {
+    const entries = Object.entries(userProps[prop]);
 
     if (entries.length === 1) {
-      sample[property] = entries[0][1];
+      dtoObject[prop] = entries[0][1];
     } else {
-      sample[property] = user[property];
+      dtoObject[prop] = userProps[prop];
     }
   }
 
-  let content = '';
+  const dtoObjectInterfaces = JsonToTS(dtoObject);
 
-  const interfaces = JsonToTS(sample);
-  interfaces[0] = interfaces[0].replace('RootObject', `${domainName}Dto`);
-  interfaces[0] = interfaces[0].replace('interface', `export class`);
-  interfaces.map(
-    (_interface) =>
-      (content += `${_interface
+  const domainName = UserProps.name.replace('Props', '');
+
+  dtoObjectInterfaces[0] = dtoObjectInterfaces[0].replace(
+    'RootObject',
+    `${domainName}Dto`,
+  );
+
+  let dtoContent = '';
+
+  dtoObjectInterfaces.map(
+    (dtoObjectInterface) =>
+      (dtoContent += `${dtoObjectInterface
         .replace(/undefined/g, 'any')
         .replace(/interface/g, 'export class')
         .replace(/:/g, '?:')}\n`),
@@ -38,9 +42,15 @@ export async function domainDtoFactory(): Promise<boolean> {
     .join(__dirname, '..', 'dtos', 'domain', 'user.dto.ts')
     .replace('/dist', '');
 
-  await fs.writeFile(dtoPath, content);
+  await fs.writeFile(dtoPath, dtoContent);
 
-  const logger = new Logger('dtoFactory');
+  const domainFolderPath = path
+    .join(__dirname, '..', 'domain')
+    .replace('/dist', '');
+
+  await fs.rm(domainFolderPath, { recursive: true, force: true });
+
+  const logger = new Logger('domainDtoFactory');
   logger.log(`${domainName}Dto created`);
 
   return true;
