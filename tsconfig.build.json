@@ -7,7 +7,6 @@
     "**/*spec.ts",
     "src/events-payload/domain",
     "src/events-payload/domain-replaced",
-    "src/events-payload/factories/templates",
-    "src/events-payload/factories/domain-dto.factory.ts"
+    "src/events-payload/factories/templates"
   ]
 }
