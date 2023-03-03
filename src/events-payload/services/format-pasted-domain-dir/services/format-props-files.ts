@@ -117,7 +117,8 @@ export async function formatPropsFiles(
                   spaces2,
                   property,
                   optional,
-                  `'some-string'`,
+                  'undefined',
+                  'any',
                 );
             }
           },

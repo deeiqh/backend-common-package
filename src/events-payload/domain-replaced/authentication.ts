@@ -8,5 +8,5 @@ export class AuthenticationProps {
   userId: AuthenticationUserIdProps = new AuthenticationUserIdProps();
   password: AuthenticationPasswordProps = new AuthenticationPasswordProps();
   session?: AuthenticationSessionProps = new AuthenticationSessionProps();
-  isRetricted: boolean = false;
+  isRetricted = false;
   }

@@ -6,7 +6,7 @@ export function addProps(
 ): string {
   domainProps[propsType] = propsValue
     .replace(/(.+: )([^;]+)/g, '$1$2Props = new $2Props()')
-    .replace(/booleanProps = new booleanProps\(\)/g, 'boolean = false');
+    .replace(/: booleanProps = new booleanProps\(\)/g, ' = false');
 
   return domainProps[propsType]
     .replace(
