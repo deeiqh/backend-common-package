@@ -8,7 +8,7 @@ import { formatPropsFiles } from './services/format-props-files';
 export async function formatPastedDomainDir(
   domainName: string,
 ): Promise<boolean> {
-  const logger = new Logger('Format pasted domain dir');
+  const logger = new Logger('formatPastedDomainDir');
 
   const domainFolderPath = path
     .join(__dirname, '..', '..', 'domain')
@@ -61,6 +61,15 @@ export async function formatPastedDomainDir(
     }
   }
 
+  const dtoContent = `${imports}\nexport class ${capitalize(
+    domainName,
+  )}Props {  ${domainProps.required}  ${domainProps.optional}}\n`;
+
+  await fs.writeFile(
+    path.join(domainNewContentFolderPath, `${domainName}.ts`),
+    dtoContent,
+  );
+
   const domainFolderFiles = await fs.readdir(domainFolderPath);
   if (
     !(await formatPropsFiles(
@@ -74,15 +83,10 @@ export async function formatPastedDomainDir(
     return false;
   }
 
-  const dtoContent = `${imports}\nexport class ${capitalize(
-    domainName,
-  )}Props {  ${domainProps.required}  ${domainProps.optional}}\n`;
-
-  await fs.writeFile(
-    path.join(domainNewContentFolderPath, `${domainName}.ts`),
-    dtoContent,
+  logger.log(
+    `Pasted ${domainName} directory was formatted\n  If ${capitalize(
+      domainName,
+    )}Dto was not created please restart`,
   );
-
-  logger.log(`Pasted ${domainName} directory was formatted.`);
   return true;
 }

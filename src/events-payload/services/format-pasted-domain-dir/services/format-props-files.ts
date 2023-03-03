@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs/promises';
 import { linePropFormatTemplate } from './line-prop-format-template';
 import { fileNameToPascalCase } from 'src/events-payload/utils/file-name-to-pascal-case';
+import { restartDomainDtoFactory } from '../../restart-domain-dto-factory';
 
 export async function formatPropsFiles(
   domainFolderFiles: string[],
@@ -35,6 +36,7 @@ export async function formatPropsFiles(
         propFileContent === propFileContentRaw &&
         propFileContentRaw.slice(0, 'export class'.length) !== 'export class'
       ) {
+        restartDomainDtoFactory();
         logger.error(`Can't parse ${propFileName}. Fix it please then restart`);
         return false;
       }
