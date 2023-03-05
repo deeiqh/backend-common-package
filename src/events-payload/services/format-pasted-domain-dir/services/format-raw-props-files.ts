@@ -5,7 +5,7 @@ import { linePropFormatTemplate } from './line-prop-format-template';
 import { fileNameToPascalCase } from 'src/events-payload/utils/file-name-to-pascal-case';
 import { restartDomainDtoFactory } from '../../restart-domain-dto-factory';
 
-export async function formatPropsFiles(
+export async function formatRawPropsFiles(
   domainFolderFiles: string[],
   domainName: string,
   domainFolderPath: string,

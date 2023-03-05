@@ -6,7 +6,7 @@
     "dist",
     "**/*spec.ts",
     "src/events-payload/domain",
-    "src/events-payload/domain-replaced",
+    "src/events-payload/formatted-domain",
     "src/events-payload/factories/templates"
   ]
 }

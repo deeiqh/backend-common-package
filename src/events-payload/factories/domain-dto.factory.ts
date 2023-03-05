@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import JsonToTS from 'json-to-ts';
 import * as path from 'path';
-import { AuthenticationProps } from '../domain-replaced/authentication';
+import { AuthenticationProps } from '../formatted-domain/authentication';
 
 export async function domainDtoFactory(): Promise<boolean> {
   const authenticationProps: Record<string, any> = new AuthenticationProps();

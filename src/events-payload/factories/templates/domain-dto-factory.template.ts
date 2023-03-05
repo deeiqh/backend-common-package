@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import JsonToTS from 'json-to-ts';
 import * as path from 'path';
-import { @Domain@Props } from '../domain-replaced/@domain@';
+import { @Domain@Props } from '../formatted-domain/@domain@';
 
 export async function domainDtoFactory(): Promise<boolean> {
   const @domain@Props: Record<string, any> = new @Domain@Props();

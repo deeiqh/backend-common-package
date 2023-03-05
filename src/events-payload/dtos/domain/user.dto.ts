@@ -1,6 +1,6 @@
 export class UserDto {
   id?: string;
-  status?: string;
+  status?: any;
   email?: string;
   password?: Password;
   country?: string;
@@ -13,14 +13,14 @@ export class UserDto {
   city?: string;
   province?: string;
   postalCode?: string;
-  employmentStatus?: string;
+  employmentStatus?: any;
   employerName?: string;
   employerPosition?: string;
-  investmentExperience?: string;
-  investmentObjective?: string;
-  annualIncome?: string;
-  totalNetworth?: string;
-  sourceOfIncome?: string;
+  investmentExperience?: any;
+  investmentObjective?: any;
+  annualIncome?: any;
+  totalNetworth?: any;
+  sourceOfIncome?: any;
   documents?: Documents;
   dateOfBirth?: Date;
   userBrokerApplicationData?: UserBrokerApplicationData;
