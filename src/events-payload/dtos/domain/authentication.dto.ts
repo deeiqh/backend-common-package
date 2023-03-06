@@ -1,16 +1,9 @@
 export class AuthenticationDto {
-  email?: string;
-  userId?: string;
-  password?: Password;
-  session?: Session;
-  isRetricted?: boolean;
-}
-export class Session {
-  userId?: string;
-  session?: string;
-  refreshToken?: string;
-}
-export class Password {
-  value?: string;
-  hashed?: boolean;
+  authenticationId?: string;
+  token?: string;
+  provider?: string;
+  credential?: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

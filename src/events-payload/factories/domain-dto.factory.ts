@@ -2,26 +2,26 @@ import { Logger } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import JsonToTS from 'json-to-ts';
 import * as path from 'path';
-import { AuthenticationProps } from '../formatted-domain/authentication';
+import { OrderProps } from '../formatted-domain/order';
 
 export async function domainDtoFactory(): Promise<boolean> {
-  const authenticationProps: Record<string, any> = new AuthenticationProps();
+  const orderProps: Record<string, any> = new OrderProps();
 
   const dtoObject: Record<string, any> = {};
 
-  for (const prop of Object.keys(authenticationProps)) {
-    const entries = Object.entries(authenticationProps[prop]);
+  for (const prop of Object.keys(orderProps)) {
+    const entries = Object.entries(orderProps[prop]);
 
     if (entries.length === 1) {
       dtoObject[prop] = entries[0][1];
     } else {
-      dtoObject[prop] = authenticationProps[prop];
+      dtoObject[prop] = orderProps[prop];
     }
   }
 
   const dtoObjectInterfaces = JsonToTS(dtoObject);
 
-  const domainName = AuthenticationProps.name.replace('Props', '');
+  const domainName = OrderProps.name.replace('Props', '');
 
   dtoObjectInterfaces[0] = dtoObjectInterfaces[0].replace(
     'RootObject',
@@ -39,7 +39,7 @@ export async function domainDtoFactory(): Promise<boolean> {
   );
 
   const dtoPath = path
-    .join(__dirname, '..', 'dtos', 'domain', 'authentication.dto.ts')
+    .join(__dirname, '..', 'dtos', 'domain', 'order.dto.ts')
     .replace('/dist', '');
 
   await fs.writeFile(dtoPath, dtoContent);

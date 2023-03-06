@@ -20,21 +20,36 @@ export async function formatRawPropsFiles(
         encoding: 'utf-8',
       });
 
-      const regex = new RegExp(
+      let propFileContent: string;
+      const withPropsInterface = new RegExp(
         `(.*)interface I?(${fileNameToPascalCase(
           propFileName,
         )}Props) ({([a-z]|[A-Z]|[0-9]|:|;|{|};|\\s|\\]|\\[|\\?|_)*}\n)(.*)`,
         's',
       );
-
-      const propFileContent = propFileContentRaw.replace(
-        regex,
-        'export class $2 $3',
-      );
+      if (!withPropsInterface.exec(propFileContentRaw)) {
+        const withoutPropsInterface = new RegExp(
+          `(.*)export class (${fileNameToPascalCase(
+            propFileName,
+          )}) ({\.+\\w+: \\w+;)(.+)`,
+          's',
+        );
+        propFileContent = propFileContentRaw.replace(
+          withoutPropsInterface,
+          'export class $2Props $3\n}\n',
+        );
+      } else {
+        propFileContent = propFileContentRaw.replace(
+          withPropsInterface,
+          'export class $2 $3',
+        );
+      }
 
       if (
-        propFileContent === propFileContentRaw &&
-        propFileContentRaw.slice(0, 'export class'.length) !== 'export class'
+        (propFileContent === propFileContentRaw &&
+          'export class' !==
+            propFileContentRaw.slice(0, 'export class'.length)) ||
+        propFileName.replace(/(\w+)-(.*)/s, '$1') !== domainName
       ) {
         restartDomainDtoFactory();
         logger.error(`Can't parse ${propFileName}. Fix it please then restart`);
@@ -45,6 +60,8 @@ export async function formatRawPropsFiles(
         .replace(
           /\n(    |      |        )?(  )?(\w+)(\?)?: (\w+(\[\])?);/g,
           (match, spaces4orMany, spaces2, property, optional, type) => {
+            type = type.replace(/(\w+)Enum/, 'string');
+
             switch (type) {
               case 'string':
                 return linePropFormatTemplate(
@@ -124,7 +141,6 @@ export async function formatRawPropsFiles(
           },
         )
         .replace(/: {/g, ' = {');
-
       await fs.writeFile(
         path.join(domainNewContentFolderPath, propFileName),
         fixedPropFileContent,
@@ -134,6 +150,5 @@ export async function formatRawPropsFiles(
       );
     }
   }
-
   return true;
 }

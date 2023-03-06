@@ -135,11 +135,15 @@ b) There is not a misspelling, but there is a conflict between letter cases from
 >
 > the file name suggests the interface name should be `UserTotalNetworthProps` because its name is `user-total-networth.ts` instead of `user-total-net-worth.ts`
 
-In both cases we should ensure to:
+In this cases we should ensure to:
 
-- Keep naming consistency (misspelling, naming follows file name) also in the main interface file inside `domain/interfaces`, for example in `domain/interfaces/user.interface.ts`
+- Keep naming consistency (misspelling, naming follows file name) also in the main interface file inside `domain/interfaces`, for example in `domain/interfaces/user.interface.ts`.
+
+- Decide to choose file name or property name consistency. So, change property name or propery file name.
 
 - Replace (`Ctrl+h`) all terms with the correct one in the prop file (`user-employer-position.ts`, `user-total-networth.ts` for example) and main interface file (`user.interface.ts` for example).
+
+- If an import error appears in some`formatted-domain` file, please fix it.
 
 Note that we are working inside the previous pasted `domain` folder.
 

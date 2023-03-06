@@ -6,7 +6,9 @@ export function addProps(
 ): string {
   domainProps[requiredOptionalOrAll] = allRawDomainProps
     .replace(/(.+: )([^;]+)/g, '$1$2Props = new $2Props()')
-    .replace(/: booleanProps = new booleanProps\(\)/g, ' = false');
+    .replace(/: booleanProps = new booleanProps\(\)/g, ' = false')
+    .replace(/: DateProps = new DateProps\(\)/g, ' = new Date()')
+    .replace(/: DateValueProps = new DateValueProps\(\)/g, ' = new Date()');
 
   return domainProps[requiredOptionalOrAll]
     .replace(
