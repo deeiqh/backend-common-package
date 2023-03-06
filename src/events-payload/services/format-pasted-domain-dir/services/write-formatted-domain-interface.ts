@@ -11,8 +11,8 @@ export async function writeFormattedDomainInterface(
   const formattedDomainInterface = `${
     domainInterface.imports
   }\nexport class ${capitalize(domainName)}Props {  ${
-    domainInterface.props.required
-  }  ${domainInterface.props.optional}}\n`;
+    domainInterface.props.all
+  }  ${domainInterface.props.required}  ${domainInterface.props.optional}}\n`;
 
   const formattedDomainDirPath = await makeFormattedDomainDir();
 

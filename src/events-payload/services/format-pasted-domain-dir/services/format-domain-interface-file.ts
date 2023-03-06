@@ -8,19 +8,32 @@ export function formatDomainInterfaceFile(
   domainInterface: DomainInterface,
   domainName: string,
 ): void {
-  domainInterface.imports += addProps(
-    'required',
-    domainInterfaceContent.replace(getpropsRegex('RequiredProps'), '$4'),
-    domainInterface.props,
-    domainName,
+  const isRequiredOrOptional = /(Required|Optional)Props {/.test(
+    domainInterfaceContent,
   );
 
-  domainInterface.imports += addProps(
-    'optional',
-    domainInterfaceContent.replace(getpropsRegex('OptionalProps'), '$4'),
-    domainInterface.props,
-    domainName,
-  );
+  if (!isRequiredOrOptional) {
+    domainInterface.imports += addProps(
+      'all',
+      domainInterfaceContent.replace(getpropsRegex('Props'), '$4'),
+      domainInterface.props,
+      domainName,
+    );
+  } else {
+    domainInterface.imports += addProps(
+      'required',
+      domainInterfaceContent.replace(getpropsRegex('RequiredProps'), '$4'),
+      domainInterface.props,
+      domainName,
+    );
+
+    domainInterface.imports += addProps(
+      'optional',
+      domainInterfaceContent.replace(getpropsRegex('OptionalProps'), '$4'),
+      domainInterface.props,
+      domainName,
+    );
+  }
 
   const onlyOneImport = new Set<string>();
   const repeatedImports: string[] = [];
